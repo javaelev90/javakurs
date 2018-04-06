@@ -4,8 +4,8 @@ public class CharacterCounter implements Counter {
 
 	@Override
 	public int count(String text) {
-		String[] chars = text.split("\\S");
-		return chars.length;
+		String textMod = text.replaceAll("[^a-zA-ZåäöÅÄÖ]", "");
+		return textMod.length();
 	}
 
 }

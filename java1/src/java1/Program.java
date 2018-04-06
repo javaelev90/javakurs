@@ -1,53 +1,64 @@
 package java1;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Program {
-	
-	public static void main(String[] args){
-		
-		
-		InputHandler iHandler = new InputHandler();
-		MenuPrinter printer = new MenuPrinter();
+
+	public static void main(String[] args) {
+
 		WordCounter words = new WordCounter();
 		CharacterCounter chars = new CharacterCounter();
 		boolean isFinished = false;
-		
-		
-		try (BufferedReader reader = iHandler.getBufferedReader(System.in)){
-			while(!isFinished) {	
-				printer.printDefaultMenu();
-				char choice = iHandler.getChoiceInput();
-				switch(choice) {
+
+		try (InputReader reader = new InputReader(new InputStreamReader(System.in));
+				OutputWriter writer = new OutputWriter(System.out)) {
+			while (!isFinished) {
+				writer.printDefaultMenu();
+				char choice = reader.getChoiceInput();
+				String text;
+				switch (choice) {
 				case '1':
-					printer.printCountWordOption();
-					printer.print(""+words.count(iHandler.getTextInput()));
+					writer.printCountWordOption();
+					writer.printCmdInterruptOption();
+					text = reader.getTextInput();
+					if (reader.isBreakOption(text)) {
+						break;
+					}
+					writer.printWordCount(words.count(text));
 					break;
 				case '2':
-					printer.printCountCharactersOption();
-					printer.print(""+chars.count(iHandler.getTextInput()));
+					writer.printCountCharactersOption();
+					writer.printCmdInterruptOption();
+					text = reader.getTextInput();
+					if (reader.isBreakOption(text)) {
+						break;
+					}
+					writer.printCharCount(chars.count(text));
 					break;
 				case '3':
-					printer.printCountWordsAndCharactersOption();
-					printer.print("There are: "+chars.count(iHandler.getTextInput())+ " characters.");
-					printer.print("There are: "+words.count(iHandler.getTextInput())+ " words.");
+					writer.printCountWordsAndCharactersOption();
+					writer.printCmdInterruptOption();
+					text = reader.getTextInput();
+					if (reader.isBreakOption(text)) {
+						break;
+					}
+					writer.printWordCount(words.count(text));
+					writer.printCharCount(chars.count(text));
 					break;
 				case '4':
 					isFinished = true;
 					break;
 				default:
-					printer.thatIsNotAnOption();
+					writer.thatIsNotAnOption();
 					break;
-				
-				
 				}
+
 			}
-			
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 	
+			System.out.println(e.getClass() + " was thrown with message: " + e.getMessage());
+		}
 	}
 
 }
