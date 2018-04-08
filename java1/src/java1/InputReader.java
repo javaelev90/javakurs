@@ -20,8 +20,8 @@ public class InputReader extends BufferedReader {
 		return this.readLine();
 	}
 
-	public boolean isBreakOption(String text) {
-		if (text.length() == 1 && text.charAt(0) == '.') {
+	public boolean gotBreakOption(String text, char breakOption) {
+		if (text.length() == 1 && text.charAt(0) == breakOption) {
 			return true;
 		}
 		return false;

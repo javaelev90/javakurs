@@ -10,6 +10,8 @@ public class Program {
 		WordCounter words = new WordCounter();
 		CharacterCounter chars = new CharacterCounter();
 		boolean isFinished = false;
+		// To exit out of a chosen menu operation type only this
+		char exitOptionCmd = '.';
 
 		try (InputReader reader = new InputReader(new InputStreamReader(System.in));
 				OutputWriter writer = new OutputWriter(System.out)) {
@@ -22,7 +24,7 @@ public class Program {
 					writer.printCountWordOption();
 					writer.printCmdInterruptOption();
 					text = reader.getTextInput();
-					if (reader.isBreakOption(text)) {
+					if (reader.gotBreakOption(text, exitOptionCmd)) {
 						break;
 					}
 					writer.printWordCount(words.count(text));
@@ -31,7 +33,7 @@ public class Program {
 					writer.printCountCharactersOption();
 					writer.printCmdInterruptOption();
 					text = reader.getTextInput();
-					if (reader.isBreakOption(text)) {
+					if (reader.gotBreakOption(text, exitOptionCmd)) {
 						break;
 					}
 					writer.printCharCount(chars.count(text));
@@ -40,7 +42,7 @@ public class Program {
 					writer.printCountWordsAndCharactersOption();
 					writer.printCmdInterruptOption();
 					text = reader.getTextInput();
-					if (reader.isBreakOption(text)) {
+					if (reader.gotBreakOption(text, exitOptionCmd)) {
 						break;
 					}
 					writer.printWordCount(words.count(text));
