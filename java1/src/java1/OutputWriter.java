@@ -57,7 +57,7 @@ public class OutputWriter extends PrintWriter {
 	}
 
 	public void printCmdInterruptOption() {
-		println("To go back to menu type a single dot( . ) and press enter");
+		println("To go back to menu type only a single dot( . ) and press enter");
 		flush();
 	}
 }
