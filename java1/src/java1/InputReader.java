@@ -11,8 +11,9 @@ public class InputReader extends BufferedReader {
 	}
 
 	public char getChoiceInput() throws IOException {
-		char c = this.readLine().charAt(0);
-		return c;
+		String c = this.readLine();
+		if(c.length() != 0) return c.charAt(0);
+		return 0;
 	}
 
 	public String getTextInput() throws IOException {
@@ -20,6 +21,7 @@ public class InputReader extends BufferedReader {
 		return this.readLine();
 	}
 
+	
 	public boolean gotBreakOption(String text, char breakOption) {
 		if (text.length() == 1 && text.charAt(0) == breakOption) {
 			return true;
