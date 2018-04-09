@@ -22,8 +22,8 @@ public class InputReader extends BufferedReader {
 	}
 
 	
-	public boolean gotBreakOption(String text, char breakOption) {
-		if (text.length() == 1 && text.charAt(0) == breakOption) {
+	public boolean gotBreakOption(String text, String breakOption) {
+		if (text.length() == breakOption.length() && text.equals(breakOption)) {
 			return true;
 		}
 		return false;

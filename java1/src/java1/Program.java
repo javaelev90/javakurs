@@ -11,7 +11,7 @@ public class Program {
 		CharacterCounter chars = new CharacterCounter();
 		boolean isFinished = false;
 		// To exit out of a chosen menu operation type only this
-		char exitOptionCmd = '.';
+		String exitOptionCmd = ".";
 
 		try (InputReader reader = new InputReader(new InputStreamReader(System.in));
 				OutputWriter writer = new OutputWriter(System.out)) {
@@ -22,27 +22,27 @@ public class Program {
 				switch (choice) {
 				case '1':
 					writer.printCountWordOption();
-					writer.printCmdInterruptOption();
+					writer.printCmdInterruptOption(exitOptionCmd);
 					text = reader.getTextInput();
-					if (reader.gotBreakOption(text, exitOptionCmd)) {
+					if (text.equals("") || reader.gotBreakOption(text, exitOptionCmd)) {
 						break;
 					}
 					writer.printWordCount(words.count(text));
 					break;
 				case '2':
 					writer.printCountCharactersOption();
-					writer.printCmdInterruptOption();
+					writer.printCmdInterruptOption(exitOptionCmd);
 					text = reader.getTextInput();
-					if (reader.gotBreakOption(text, exitOptionCmd)) {
+					if (text.equals("") || reader.gotBreakOption(text, exitOptionCmd)) {
 						break;
 					}
 					writer.printCharCount(chars.count(text));
 					break;
 				case '3':
 					writer.printCountWordsAndCharactersOption();
-					writer.printCmdInterruptOption();
+					writer.printCmdInterruptOption(exitOptionCmd);
 					text = reader.getTextInput();
-					if (reader.gotBreakOption(text, exitOptionCmd)) {
+					if (text.equals("") || reader.gotBreakOption(text, exitOptionCmd)) {
 						break;
 					}
 					writer.printWordCount(words.count(text));
