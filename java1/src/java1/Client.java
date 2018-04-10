@@ -1,26 +1,17 @@
 package java1;
 
-import java.time.LocalDateTime;
-
 public class Client {
 	
-	private LocalDateTime eventStartTime;
-	private LocalDateTime eventStopTime;
+	private Booking booking;
 	private String firstName;
 	private String lastName;
 	private String phoneNumber;
 	
-	public LocalDateTime getEventStartTime() {
-		return eventStartTime;
+	public Booking getBooking() {
+		return booking;
 	}
-	public void setEventStartTime(LocalDateTime eventStartTime) {
-		this.eventStartTime = eventStartTime;
-	}
-	public LocalDateTime getEventStopTime() {
-		return eventStopTime;
-	}
-	public void setEventStopTime(LocalDateTime eventStopTime) {
-		this.eventStopTime = eventStopTime;
+	public void setBooking(Booking booking) {
+		this.booking = booking;
 	}
 	public String getFirstName() {
 		return firstName;
