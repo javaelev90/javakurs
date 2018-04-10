@@ -3,7 +3,7 @@ package java1;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Booking {
+public class BookingTimeSlot {
 	
 	private LocalDate appointmentDate;
 	private LocalTime eventStartTime;
@@ -26,6 +26,19 @@ public class Booking {
 	}
 	public void setEventStopTime(LocalTime eventStopTime) {
 		this.eventStopTime = eventStopTime;
+	}
+	
+	public boolean doesTimeSlotsCollide(BookingTimeSlot timeSlot) {
+		LocalDate date = timeSlot.getAppointmentDate();
+		LocalTime startTime = timeSlot.getEventStartTime();
+		LocalTime stopTime = timeSlot.getEventStopTime();
+		
+		if(!date.isEqual(appointmentDate)) return false;
+		if(startTime.isAfter(eventStopTime)) return false;
+		if(startTime.isBefore(eventStartTime) && stopTime.isBefore(eventStartTime)) return false;
+
+		return true;
+		
 	}
 	
 }

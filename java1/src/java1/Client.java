@@ -2,15 +2,15 @@ package java1;
 
 public class Client {
 	
-	private Booking booking;
+	private BookingTimeSlot booking;
 	private String firstName;
 	private String lastName;
 	private String phoneNumber;
 	
-	public Booking getBooking() {
+	public BookingTimeSlot getBooking() {
 		return booking;
 	}
-	public void setBooking(Booking booking) {
+	public void setBooking(BookingTimeSlot booking) {
 		this.booking = booking;
 	}
 	public String getFirstName() {

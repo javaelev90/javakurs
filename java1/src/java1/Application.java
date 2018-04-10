@@ -2,8 +2,6 @@ package java1;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 public class Application {
 
@@ -19,22 +17,29 @@ public class Application {
 	public void run() {
 		if(!setupDone) return;
 		boolean wantToExit = false;
-		ClientManager clientManager = new ClientManager();
+		EmployeeHandler employeeHandler = new ForgetfulEmployeeHandler(new ForgetfulDataStore());
+		BookingManager manager = new BookingManager(employeeHandler);
+		
+
 		try(InputHandler input = new InputHandler(new InputStreamReader(System.in));
 				MenuPrinter menu = new MenuPrinter(System.out)) {
 			
 			while(!wantToExit) {
-				menu.printMainMenu();
+				menu.printBookingMenu();
 				// Return 0 if empty choice
 				char choice = input.getChoiceInput();
 				
 				switch(choice) {
 				
 				case '1':
-					clientManager.makeBooking(input, menu);
+					manager.makeBookingTimeSlot(input, menu);
+				
+					
 					break;
 					
 				case '2':
+					
+					
 					break;
 					
 				case '3':
@@ -52,6 +57,8 @@ public class Application {
 			e.printStackTrace();
 		}			
 	}
+	
+	
 	
 	
 		

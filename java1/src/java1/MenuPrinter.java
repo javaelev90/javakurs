@@ -11,18 +11,17 @@ public class MenuPrinter extends PrintWriter {
 	
 	public void printMainMenu() {
 		println("----Main menu----");
-		println("1. Book client");
-		println("2. Check available employees");
-		println("3. Administrate employees");
-		println("4. Exit");
+		println("1. Booking menu");
+		println("2. Administrate employees");
+		println("3. Exit");
 		flush();
 	}
 	
 	public void printBookingMenu() {
 		
 		println("----Booking menu----");
-		println("1. Book client");
-		println("2. Check available employees");
+		println("1. Make booking");
+		println("2. Check bookings");
 		println("3. Main menu");
 		flush();
 	}

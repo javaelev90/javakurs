@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class ClientManager {
+public class BookingManager {
 	
-	private enum BookingStages {AddDate, AddStartTime, AddEndTime, MakeBooking, EXIT};
+	private enum BookingStages {AddDate, AddStartTime, AddEndTime, MakeBooking, Exit};
+	private EmployeeHandler employeeHandler;
 	
+	public BookingManager(EmployeeHandler employeeHandler) {
+		this.employeeHandler = employeeHandler;
+	}
 	
-	public Booking makeBooking(InputHandler input, MenuPrinter menu) throws IOException {
+	public void makeBookingTimeSlot(InputHandler input, MenuPrinter menu) throws IOException {
 		boolean wantToExit = false;
 		BookingStages stage = BookingStages.AddDate;
-		Booking booking = new Booking();
+		BookingTimeSlot booking = new BookingTimeSlot();
 		while(!wantToExit) {
 			
 			switch(stage) {
@@ -21,7 +25,7 @@ public class ClientManager {
 				menu.printMainMenuBookClientsOptionDate();
 				String dateString = input.getTextInput();
 				if(dateString.equals("")) { 
-					stage = BookingStages.EXIT; 
+					stage = BookingStages.Exit; 
 					break;
 				}
 				LocalDate date = DateTimeValidator.isValidDate(dateString);
@@ -37,7 +41,7 @@ public class ClientManager {
 				menu.printMainMenuBookClientsOptionStartTime();
 				String startTimeString = input.getTextInput();
 				if(startTimeString.equals("")) { 
-					stage = BookingStages.EXIT; 
+					stage = BookingStages.Exit; 
 					break;
 				}
 				LocalTime startTime = DateTimeValidator.isValidTime(startTimeString);
@@ -53,7 +57,7 @@ public class ClientManager {
 				menu.printMainMenuBookClientsOptionEndTime();
 				String stopTimeString = input.getTextInput();
 				if(stopTimeString.equals("")) { 
-					stage = BookingStages.EXIT; 
+					stage = BookingStages.Exit; 
 					break;
 				}
 				LocalTime stopTime = DateTimeValidator.isValidTime(stopTimeString);
@@ -67,17 +71,16 @@ public class ClientManager {
 				break;
 			case MakeBooking:
 				//TODO fix this structure
-				return booking;
-			case EXIT:
+				break;
+			case Exit:
 				//TODO fix this structure
-				return null;
+				wantToExit = true;
 			
 			default:
 				menu.printInvalidMenuOption();
 				break;
-			
 			}
 		}
-		return null;
 	}
+
 }
