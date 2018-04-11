@@ -49,9 +49,9 @@ public class Schedule {
 		}
 		String strVersion = "";
 		for (Map.Entry<String, List<Booking>> entry : schedule.entrySet()) {
-			strVersion += entry.getKey() + ":\n";
+			strVersion += "-" + entry.getKey() + "\n";
 			for (Booking booking : entry.getValue()) {
-				strVersion += "  " + booking.getBookingTime().toString() + "\n";
+				strVersion += "--" + booking.getBookingTime().toString() + "\n";
 			}
 		}
 		return strVersion;

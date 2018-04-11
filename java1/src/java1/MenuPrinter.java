@@ -19,12 +19,12 @@ public class MenuPrinter extends PrintWriter {
 	}
 
 	public void printMainMenuNewBookingOptionStartTime() {
-		println("\nEnter a start datetime for appointment(YYYY-MM-DD HH:MM), leave empty to exit: ");
+		println("Enter a start datetime for appointment(YYYY-MM-DD HH:MM), leave empty to exit: ");
 		flush();
 	}
 
 	public void printMainMenuNewBookingOptionEndTime() {
-		println("\nEnter a stop datetime for appointment(YYYY-MM-DD HH:MM), leave empty to exit: ");
+		println("Enter a stop datetime for appointment(YYYY-MM-DD HH:MM), leave empty to exit: ");
 		flush();
 	}
 
@@ -40,6 +40,11 @@ public class MenuPrinter extends PrintWriter {
 
 	public void printNoEmployeesAvailable() {
 		println("No employees were available at that date and time.");
+		flush();
+	}
+
+	public void printStartTimeMustBeBeforeStopTime() {
+		println("Stop time has to be after start time.");
 		flush();
 	}
 

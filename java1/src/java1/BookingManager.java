@@ -57,9 +57,10 @@ public class BookingManager {
 					menu.printInvalidDateTime(stopTimeString);
 					break;
 				}
-				if (!timeSlot.getTimeSlotStart().isAfter(stopTime)) {
-
+				if (timeSlot.getTimeSlotStart().isAfter(stopTime)) {
+					menu.printStartTimeMustBeBeforeStopTime();
 					stage = BookingStages.STOPDATETIME;
+					break;
 				}
 				timeSlot.setTimeSlotTop(stopTime);
 				// If validation worked goto next step
