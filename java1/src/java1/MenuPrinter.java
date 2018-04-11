@@ -18,18 +18,13 @@ public class MenuPrinter extends PrintWriter {
 		flush();
 	}
 	
-	public void printMainMenuBookClientsOptionDate() {
-		print("\nEnter date you would like to book(YYYY-MM-DD): ");
-		flush();
-	}
-	
 	public void printMainMenuBookClientsOptionStartTime() {
-		print("\nEnter a start time for appointment(HH:MM): ");
+		println("\nEnter a start datetime for appointment(YYYY-MM-DD HH:MM): ");
 		flush();
 	}
 	
 	public void printMainMenuBookClientsOptionEndTime() {
-		print("\nEnter a stop time for appointment(HH:MM): ");
+		println("\nEnter a stop datetime for appointment(YYYY-MM-DD HH:MM): ");
 		flush();
 	}
 	
@@ -38,13 +33,8 @@ public class MenuPrinter extends PrintWriter {
 		flush();
 	}
 	
-	public void printInvalidDate(String date) {
-		format("\nInvalid date: %s, should have format YYYY-MM-DD", date);
-		flush();
-	}
-	
-	public void printInvalidTime(String time) {
-		format("\nInvalid time: %s, should have format HH:MM", time);
+	public void printInvalidDateTime(String datetime) {
+		format("Invalid datetime: %s, should have format YYYY-MM-DD HH:MM \n", datetime);
 		flush();
 	}
 	
@@ -54,7 +44,6 @@ public class MenuPrinter extends PrintWriter {
 	}
 	
 	public void printBookings(List<Employee> employees) {
-		//TODO wont show name now
 		println("----Bookings per employee----");
 		for(Employee e : employees) {
 			println(e.getFullName()+":");

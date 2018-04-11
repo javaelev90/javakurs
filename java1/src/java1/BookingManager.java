@@ -2,12 +2,13 @@ package java1;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 public class BookingManager {
 	
-	private enum BookingStages {AddDate, AddStartTime, AddEndTime, MakeBooking, Exit};
+	private enum BookingStages {AddStartDateTime, AddEndDateTime, MakeBooking, Exit};
 	private EmployeeHandler employeeHandler;
 	
 	public BookingManager(EmployeeHandler employeeHandler) {
@@ -21,66 +22,49 @@ public class BookingManager {
 	
 	public void tryToBookTime(InputHandler input, MenuPrinter menu) throws IOException {
 		boolean wantToExit = false;
-		BookingStages stage = BookingStages.AddDate;
-		BookingTimeSlot timeSlot = new BookingTimeSlot();
+		BookingStages stage = BookingStages.AddStartDateTime;
+		TimeSlot timeSlot = new TimeSlot();
 		while(!wantToExit) {
 			
 			switch(stage) {
 			
-			case AddDate:
-				menu.printMainMenuBookClientsOptionDate();
-				String dateString = input.getTextInput();
-				if(dateString.equals("")) { 
-					stage = BookingStages.Exit; 
-					break;
-				}
-				LocalDate date = DateTimeValidator.isValidDate(dateString);
-				if(date == null) {
-					menu.printInvalidDate(dateString);
-					break;
-				} 
-				timeSlot.setAppointmentDate(date);
-				//If validation worked goto next step
-				stage = BookingStages.AddStartTime;
-				break;
-			case AddStartTime:
+			case AddStartDateTime:
 				menu.printMainMenuBookClientsOptionStartTime();
 				String startTimeString = input.getTextInput();
 				if(startTimeString.equals("")) { 
 					stage = BookingStages.Exit; 
 					break;
 				}
-				LocalTime startTime = DateTimeValidator.isValidTime(startTimeString);
+				LocalDateTime startTime = DateTimeValidator.isValidDateTime(startTimeString);
 				if(startTime == null) {
-					menu.printInvalidTime(startTimeString);
+					menu.printInvalidDateTime(startTimeString);
 					break;
 				}
-				timeSlot.setEventStartTime(startTime);
+				timeSlot.setTimeSlotStart(startTime);
 				//If validation worked goto next step
-				stage = BookingStages.AddEndTime;
+				stage = BookingStages.AddEndDateTime;
 				break;
-			case AddEndTime:
+			case AddEndDateTime:
 				menu.printMainMenuBookClientsOptionEndTime();
 				String stopTimeString = input.getTextInput();
 				if(stopTimeString.equals("")) { 
 					stage = BookingStages.Exit; 
 					break;
 				}
-				LocalTime stopTime = DateTimeValidator.isValidTime(stopTimeString);
+				LocalDateTime stopTime = DateTimeValidator.isValidDateTime(stopTimeString);
 				if(stopTime == null) {
-					menu.printInvalidTime(stopTimeString);
+					menu.printInvalidDateTime(stopTimeString);
 					break;
 				}
-				timeSlot.setEventStopTime(stopTime);
+				if(!timeSlot.getTimeSlotStart().isAfter(stopTime)) {
+					
+					stage = BookingStages.AddEndDateTime;
+				}
+				timeSlot.setTimeSlotTop(stopTime);
 				//If validation worked goto next step
 				stage = BookingStages.MakeBooking;
 				break;
 			case MakeBooking:
-				//TODO fix this structure
-				if(timeSlot.getEventStartTime().isAfter(timeSlot.getEventStopTime())) {
-					//TODO add print
-					stage = BookingStages.AddStartTime;
-				}
 				Employee employee = employeeHandler.getEmployeeWithFewestBookingsOnDate(timeSlot);
 				if(employee == null) {
 					stage = BookingStages.Exit; 
@@ -93,7 +77,6 @@ public class BookingManager {
 				stage = BookingStages.Exit; 
 				break;
 			case Exit:
-				//TODO fix this structure
 				wantToExit = true;
 				break;
 			default:
@@ -102,6 +85,4 @@ public class BookingManager {
 			}
 		}
 	}
-
-
 }

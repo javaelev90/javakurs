@@ -31,8 +31,8 @@ public class Application {
 		emp3.setSchedule(new Schedule());;
 		
 		dataStore.storeNewEmployee(emp1);
-		dataStore.storeNewEmployee(emp2);
-		dataStore.storeNewEmployee(emp3);
+//		dataStore.storeNewEmployee(emp2);
+//		dataStore.storeNewEmployee(emp3);
 		
 		setupDone = true;
 		return setupDone;

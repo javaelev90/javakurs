@@ -2,12 +2,12 @@ package java1;
 
 public class Booking {
 	
-	private BookingTimeSlot booking;
+	private TimeSlot booking;
 	
-	public BookingTimeSlot getBooking() {
+	public TimeSlot getBooking() {
 		return booking;
 	}
-	public void setBooking(BookingTimeSlot booking) {
+	public void setBooking(TimeSlot booking) {
 		this.booking = booking;
 	}
 	

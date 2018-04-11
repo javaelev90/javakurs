@@ -8,14 +8,12 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler{
 	private DataStore dataStore;
 	
 	public ForgetfulEmployeeHandler(DataStore dataStore) {
-		// TODO Auto-generated constructor stub
 		this.dataStore = dataStore;
 		
 	}
 	
 	@Override
 	public List<Employee> getBookedEmployees() {
-		// TODO Auto-generated method stub
 		List<Employee> employees = dataStore.getAllEmployees();
 		employees = employees.stream().filter(employee -> !employee.getSchedule().isEmpty()).collect(Collectors.toList());
 		return employees;
@@ -23,7 +21,6 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler{
 
 	@Override
 	public boolean bookEmployee(Employee employee, Booking booking) {
-		// TODO Auto-generated method stub
 		if(dataStore.storeBooking(employee.getId(), booking)) {
 			return true;
 		}
@@ -31,7 +28,7 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler{
 	}
 
 	@Override
-	public Employee getEmployeeWithFewestBookingsOnDate(BookingTimeSlot date) {
+	public Employee getEmployeeWithFewestBookingsOnDate(TimeSlot date) {
 		List<Employee> employees = getAvailableEmployees(date);
 		int leastNumberOfBookings = Integer.MAX_VALUE;
 		if(!employees.isEmpty()) {
@@ -48,7 +45,7 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler{
 		return null;
 	}
 	
-	private List<Employee> getAvailableEmployees(BookingTimeSlot date) {
+	private List<Employee> getAvailableEmployees(TimeSlot date) {
 		// TODO Auto-generated method stub
 		List<Employee> employees = dataStore.getAllEmployees();
 		employees = employees.stream().filter(employee -> employee.getSchedule().isTimeSlotAvailable(date)).collect(Collectors.toList());
