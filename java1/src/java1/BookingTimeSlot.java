@@ -34,11 +34,13 @@ public class BookingTimeSlot {
 		LocalTime stopTime = timeSlot.getEventStopTime();
 		
 		if(!date.isEqual(appointmentDate)) return false;
-		if(startTime.isAfter(eventStopTime)) return false;
-		if(startTime.isBefore(eventStartTime) && stopTime.isBefore(eventStartTime)) return false;
-
-		return true;
-		
+		if(eventStartTime.isBefore(stopTime) && startTime.isBefore(eventStopTime) ) return true;
+		return false;		
+	}
+	
+	@Override
+	public String toString() {
+		return appointmentDate.toString() + " From: " + eventStartTime.toString() + " To: " + eventStopTime.toString();
 	}
 	
 }

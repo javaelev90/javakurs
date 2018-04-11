@@ -1,6 +1,7 @@
 package java1;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ForgetfulEmployeeHandler implements EmployeeHandler{
 	
@@ -13,16 +14,44 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler{
 	}
 	
 	@Override
-	public List<Employee> checkAvailableEmployees(BookingTimeSlot date) {
+	public List<Employee> getBookedEmployees() {
 		// TODO Auto-generated method stub
-		return null;
+		List<Employee> employees = dataStore.getAllEmployees();
+		employees = employees.stream().filter(employee -> !employee.getSchedule().isEmpty()).collect(Collectors.toList());
+		return employees;
 	}
 
 	@Override
-	public boolean bookAvailableEmployee(Employee employee, Client client) {
+	public boolean bookEmployee(Employee employee, Booking booking) {
 		// TODO Auto-generated method stub
+		if(dataStore.storeBooking(employee.getId(), booking)) {
+			return true;
+		}
 		return false;
 	}
+
+	@Override
+	public Employee getEmployeeWithFewestBookingsOnDate(BookingTimeSlot date) {
+		List<Employee> employees = getAvailableEmployees(date);
+		int leastNumberOfBookings = Integer.MAX_VALUE;
+		if(!employees.isEmpty()) {
+			Employee employeeWithFewestBookings = employees.get(0);
+			for(int i = 0; i < employees.size(); i++) {
+				int numberOfBookings = employees.get(i).getSchedule().getNumberOfAppointmentsOnDate(date);
+				if(numberOfBookings < leastNumberOfBookings) {
+					leastNumberOfBookings = numberOfBookings;
+					employeeWithFewestBookings = employees.get(i);
+				}
+			}
+			return employeeWithFewestBookings;
+		}
+		return null;
+	}
 	
-	
+	private List<Employee> getAvailableEmployees(BookingTimeSlot date) {
+		// TODO Auto-generated method stub
+		List<Employee> employees = dataStore.getAllEmployees();
+		employees = employees.stream().filter(employee -> employee.getSchedule().isTimeSlotAvailable(date)).collect(Collectors.toList());
+		return employees;
+	}
 }

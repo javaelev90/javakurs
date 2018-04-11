@@ -1,32 +1,42 @@
 package java1;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Schedule {
 	
-	private HashMap<String, List<Client>> schedule;
+	//Date string key representing a day, which holds the clients for the day
+	private HashMap<String, List<Booking>> schedule;
 	
 	public Schedule() {
-		schedule = new HashMap<String, List<Client>>();
+		schedule = new HashMap<String, List<Booking>>();
 	}
 	
-	
-	public boolean tryAddClientToSchedule(Client client) {
-		BookingTimeSlot timeSlot = client.getBooking();
-		if(!isTimeAvailable(timeSlot)) {
-			return false;
+	public int getNumberOfAppointmentsOnDate(BookingTimeSlot timeSlot) {
+		String day = timeSlot.getAppointmentDate().toString();
+		if(schedule.containsKey(day)) {
+			return schedule.get(day).size();
 		}
-		addToSchedule(client);
-		return true;
+		return 0;
 	}
 	
-	private boolean isTimeAvailable(BookingTimeSlot timeSlot) {
+	public boolean tryAddClientToSchedule(Booking booking) {
+		BookingTimeSlot timeSlot = booking.getBooking();
+		if(isTimeSlotAvailable(timeSlot)) {
+			addToSchedule(booking);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isTimeSlotAvailable(BookingTimeSlot timeSlot) {
 		String dateDay = timeSlot.getAppointmentDate().toString();
 		if(schedule.containsKey(dateDay)) {
-			List<Client> clients = schedule.get(dateDay);
-			for(Client client : clients) {
-				BookingTimeSlot bTimeSlot = client.getBooking();
+			List<Booking> bookings = schedule.get(dateDay);
+			for(Booking booking : bookings) {
+				BookingTimeSlot bTimeSlot = booking.getBooking();
 				if(bTimeSlot.doesTimeSlotsCollide(timeSlot)) {
 					return false;
 				}
@@ -35,10 +45,35 @@ public class Schedule {
 		return true;
 	}
 	
-	private void addToSchedule(Client client) {
-		String date = client.getBooking().getAppointmentDate().toString();
-		List<Client> clients = schedule.get(date);
-		clients.add(client);
+	private void addToSchedule(Booking booking) {
+		String date = booking.getBooking().getAppointmentDate().toString();
+		List<Booking> bookings;
+		if(!schedule.containsKey(date)) {
+			bookings = new ArrayList<Booking>();
+		} else {
+			bookings = schedule.get(date);
+		}
+		bookings.add(booking);
+		schedule.put(date, bookings);
+	}
+	
+	@Override
+	public String toString() {
+		if(schedule.isEmpty()) {
+			return "";
+		}
+		String strVersion = "";
+		for(Map.Entry<String, List<Booking>> entry : schedule.entrySet()) {
+			for(Booking booking : entry.getValue()) {
+				strVersion += booking.getBooking().toString() + "\n";
+			}
+		}
+		return strVersion;
+		
+	}
+	
+	public boolean isEmpty() {
+		return schedule.isEmpty();
 	}
 	
 }

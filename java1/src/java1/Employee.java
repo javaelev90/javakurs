@@ -2,11 +2,17 @@ package java1;
 
 public class Employee {
 	
+	private Schedule schedule;
 	private int id;
 	private String firstName;
 	private String lastName;
-	private String phoneNumber;
-	
+
+	public Schedule getSchedule() {
+		return schedule;
+	}
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
 	public int getId() {
 		return id;
 	}
@@ -25,12 +31,8 @@ public class Employee {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getFullName() {
+		return firstName + " " + lastName;
 	}
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-	
 	
 }

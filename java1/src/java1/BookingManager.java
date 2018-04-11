@@ -3,6 +3,7 @@ package java1;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class BookingManager {
 	
@@ -13,10 +14,15 @@ public class BookingManager {
 		this.employeeHandler = employeeHandler;
 	}
 	
-	public void makeBookingTimeSlot(InputHandler input, MenuPrinter menu) throws IOException {
+	public void showAllBookings(MenuPrinter menu) {
+		List<Employee> employees = employeeHandler.getBookedEmployees();
+		menu.printBookings(employees);
+	}
+	
+	public void tryToBookTime(InputHandler input, MenuPrinter menu) throws IOException {
 		boolean wantToExit = false;
 		BookingStages stage = BookingStages.AddDate;
-		BookingTimeSlot booking = new BookingTimeSlot();
+		BookingTimeSlot timeSlot = new BookingTimeSlot();
 		while(!wantToExit) {
 			
 			switch(stage) {
@@ -33,7 +39,7 @@ public class BookingManager {
 					menu.printInvalidDate(dateString);
 					break;
 				} 
-				booking.setAppointmentDate(date);
+				timeSlot.setAppointmentDate(date);
 				//If validation worked goto next step
 				stage = BookingStages.AddStartTime;
 				break;
@@ -49,7 +55,7 @@ public class BookingManager {
 					menu.printInvalidTime(startTimeString);
 					break;
 				}
-				booking.setEventStartTime(startTime);
+				timeSlot.setEventStartTime(startTime);
 				//If validation worked goto next step
 				stage = BookingStages.AddEndTime;
 				break;
@@ -65,22 +71,37 @@ public class BookingManager {
 					menu.printInvalidTime(stopTimeString);
 					break;
 				}
-				booking.setEventStopTime(stopTime);
+				timeSlot.setEventStopTime(stopTime);
 				//If validation worked goto next step
 				stage = BookingStages.MakeBooking;
 				break;
 			case MakeBooking:
 				//TODO fix this structure
+				if(timeSlot.getEventStartTime().isAfter(timeSlot.getEventStopTime())) {
+					//TODO add print
+					stage = BookingStages.AddStartTime;
+				}
+				Employee employee = employeeHandler.getEmployeeWithFewestBookingsOnDate(timeSlot);
+				if(employee == null) {
+					stage = BookingStages.Exit; 
+					menu.printNoEmployeesAvailable();
+					break;
+				}
+				Booking booking = new Booking();
+				booking.setBooking(timeSlot);
+				employeeHandler.bookEmployee(employee, booking);
+				stage = BookingStages.Exit; 
 				break;
 			case Exit:
 				//TODO fix this structure
 				wantToExit = true;
-			
+				break;
 			default:
 				menu.printInvalidMenuOption();
 				break;
 			}
 		}
 	}
+
 
 }

@@ -2,6 +2,7 @@ package java1;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.List;
 
 public class MenuPrinter extends PrintWriter {
 	
@@ -11,18 +12,9 @@ public class MenuPrinter extends PrintWriter {
 	
 	public void printMainMenu() {
 		println("----Main menu----");
-		println("1. Booking menu");
-		println("2. Administrate employees");
+		println("1. New Booking");
+		println("2. Show bookings");
 		println("3. Exit");
-		flush();
-	}
-	
-	public void printBookingMenu() {
-		
-		println("----Booking menu----");
-		println("1. Make booking");
-		println("2. Check bookings");
-		println("3. Main menu");
 		flush();
 	}
 	
@@ -32,12 +24,12 @@ public class MenuPrinter extends PrintWriter {
 	}
 	
 	public void printMainMenuBookClientsOptionStartTime() {
-		print("\nEnter a start time for appointment(HH-MM): ");
+		print("\nEnter a start time for appointment(HH:MM): ");
 		flush();
 	}
 	
 	public void printMainMenuBookClientsOptionEndTime() {
-		print("\nEnter a stop time for appointment(HH-MM): ");
+		print("\nEnter a stop time for appointment(HH:MM): ");
 		flush();
 	}
 	
@@ -52,8 +44,22 @@ public class MenuPrinter extends PrintWriter {
 	}
 	
 	public void printInvalidTime(String time) {
-		format("\nInvalid time: %s, should have format HH-MM", time);
+		format("\nInvalid time: %s, should have format HH:MM", time);
 		flush();
 	}
 	
+	public void printNoEmployeesAvailable() {
+		println("No employees were available at that date and time.");
+		flush();
+	}
+	
+	public void printBookings(List<Employee> employees) {
+		//TODO wont show name now
+		println("----Bookings per employee----");
+		for(Employee e : employees) {
+			println(e.getFullName()+":");
+			println(e.getSchedule().toString());
+		}
+		flush();
+	}
 }
