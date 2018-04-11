@@ -23,7 +23,7 @@ public class TimeSlot {
 		this.timeSlotStop = timeSlotStop;
 	}
 
-	public boolean doesTimeSlotsCollide(TimeSlot timeSlot) {
+	public boolean doTimeSlotsCollide(TimeSlot timeSlot) {
 		LocalDateTime startTime = timeSlot.getTimeSlotStart();
 		LocalDateTime stopTime = timeSlot.getTimeSlotStop() ;
 		

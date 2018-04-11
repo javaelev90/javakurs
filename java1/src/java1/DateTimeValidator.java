@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class DateTimeValidator {
-	public static LocalDateTime isValidDateTime(String dateString) {
+	public static LocalDateTime getValidDateTime(String dateString) {
 		try {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 			LocalDateTime date = LocalDateTime.parse(dateString, formatter);

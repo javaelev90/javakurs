@@ -1,14 +1,20 @@
 package java1;
 
+/**
+ * 
+ * Holder class which could easily be extended to hold customer information
+ *
+ */
 public class Booking {
-	
-	private TimeSlot booking;
-	
-	public TimeSlot getBooking() {
-		return booking;
+
+	private TimeSlot bookingTime;
+
+	public TimeSlot getBookingTime() {
+		return bookingTime;
 	}
-	public void setBooking(TimeSlot booking) {
-		this.booking = booking;
+
+	public void setBooking(TimeSlot bookingTime) {
+		this.bookingTime = bookingTime;
 	}
-	
+
 }
