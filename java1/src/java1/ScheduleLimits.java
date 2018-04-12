@@ -24,8 +24,8 @@ public class ScheduleLimits {
 		LocalTime stopTime = timeSlot.getTimeSlotStop().toLocalTime();
 		if (!isSameDay(timeSlot))
 			return false;
-		return (!startTime.isBefore(this.startTime) && startTime.isBefore(this.stopTime)
-				&& !stopTime.isBefore(startTime) && stopTime.isBefore(this.stopTime));
+		return (!startTime.isBefore(this.startTime) && !startTime.isAfter(this.stopTime)
+				&& !stopTime.isBefore(startTime) && !stopTime.isAfter(this.stopTime));
 	}
 
 	private boolean isSameDay(TimeSlot timeSlot) {
