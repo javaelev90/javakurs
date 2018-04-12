@@ -59,7 +59,6 @@ public class BookingManager {
 				}
 				if (timeSlot.getTimeSlotStart().isAfter(stopTime)) {
 					menu.printStartTimeMustBeBeforeStopTime();
-					stage = BookingStages.STOPDATETIME;
 					break;
 				}
 				timeSlot.setTimeSlotTop(stopTime);
@@ -68,7 +67,7 @@ public class BookingManager {
 				break;
 			case MAKEBOOKING:
 				List<Employee> employees = employeeHandler.getAvailableEmployees(timeSlot);
-				Employee employee = getEmployeeWithFewestBookingsOnDate(timeSlot, employees);
+				Employee employee = employeeHandler.getEmployeeWithFewestBookingsOnDate(timeSlot, employees);
 				if (employee == null) {
 					stage = BookingStages.EXIT;
 					menu.printNoEmployeesAvailable();
@@ -89,20 +88,5 @@ public class BookingManager {
 		}
 	}
 
-	private Employee getEmployeeWithFewestBookingsOnDate(TimeSlot date, List<Employee> employees) {
-
-		int leastNumberOfBookings = Integer.MAX_VALUE;
-		if (!employees.isEmpty()) {
-			Employee employeeWithFewestBookings = employees.get(0);
-			for (int i = 0; i < employees.size(); i++) {
-				int numberOfBookings = employees.get(i).getSchedule().getNumberOfAppointmentsOnDate(date);
-				if (numberOfBookings < leastNumberOfBookings) {
-					leastNumberOfBookings = numberOfBookings;
-					employeeWithFewestBookings = employees.get(i);
-				}
-			}
-			return employeeWithFewestBookings;
-		}
-		return null;
-	}
+	
 }

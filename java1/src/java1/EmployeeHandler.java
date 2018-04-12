@@ -8,4 +8,6 @@ public interface EmployeeHandler {
 	public boolean bookEmployee(Employee employee, Booking booking);
 
 	public List<Employee> getAvailableEmployees(TimeSlot date);
+	
+	public Employee getEmployeeWithFewestBookingsOnDate(TimeSlot date, List<Employee> employees);
 }

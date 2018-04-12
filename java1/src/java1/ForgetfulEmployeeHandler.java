@@ -34,4 +34,22 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler {
 				.collect(Collectors.toList());
 		return employees;
 	}
+	
+	@Override
+	public Employee getEmployeeWithFewestBookingsOnDate(TimeSlot date, List<Employee> employees) {
+
+		int leastNumberOfBookings = Integer.MAX_VALUE;
+		if (!employees.isEmpty()) {
+			Employee employeeWithFewestBookings = employees.get(0);
+			for (int i = 0; i < employees.size(); i++) {
+				int numberOfBookings = employees.get(i).getSchedule().getNumberOfAppointmentsOnDate(date);
+				if (numberOfBookings < leastNumberOfBookings) {
+					leastNumberOfBookings = numberOfBookings;
+					employeeWithFewestBookings = employees.get(i);
+				}
+			}
+			return employeeWithFewestBookings;
+		}
+		return null;
+	}
 }
