@@ -1,8 +1,10 @@
-package java1;
+package java1.handlers;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
+
+import java1.model.Employee;
 
 public class MenuPrinter extends PrintWriter {
 

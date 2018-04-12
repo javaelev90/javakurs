@@ -1,7 +1,12 @@
-package java1;
+package java1.handlers;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import java1.DataStore;
+import java1.model.Booking;
+import java1.model.Employee;
+import java1.model.TimeSlot;
 
 public class ForgetfulEmployeeHandler implements EmployeeHandler {
 
@@ -52,4 +57,5 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler {
 		}
 		return null;
 	}
+	
 }

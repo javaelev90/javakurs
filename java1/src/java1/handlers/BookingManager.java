@@ -1,8 +1,13 @@
-package java1;
+package java1.handlers;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import java1.DateTimeValidator;
+import java1.model.Booking;
+import java1.model.Employee;
+import java1.model.TimeSlot;
 
 public class BookingManager {
 

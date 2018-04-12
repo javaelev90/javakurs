@@ -2,6 +2,16 @@ package java1;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Properties;
+
+import java1.handlers.BookingManager;
+import java1.handlers.EmployeeHandler;
+import java1.handlers.ForgetfulEmployeeHandler;
+import java1.handlers.InputHandler;
+import java1.handlers.MenuPrinter;
+import java1.model.Employee;
+import java1.model.Schedule;
+import java1.model.ScheduleLimits;
 
 public class Application {
 
@@ -10,6 +20,8 @@ public class Application {
 
 	public boolean setup() {
 
+		
+		
 		dataStore = new ForgetfulDataStore();
 		ScheduleLimits limits = new ScheduleLimits(DateTimeValidator.getValidTime("08:00"),
 				DateTimeValidator.getValidTime("18:00"));
@@ -21,6 +33,14 @@ public class Application {
 		emp1.setSchedule(new Schedule(limits));
 		dataStore.storeNewEmployee(emp1);
 
+		Properties properties = new Properties();
+		properties.setProperty("SQLITE_DB_URL", "jdbc:sqlite::memory:");
+		try {
+			SQLiteConnUtils.getConnection();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// **** For more employees, uncomment these ****
 
 		// Employee emp2 = new Employee();

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import java1.model.Booking;
+import java1.model.Employee;
+
 public class ForgetfulDataStore implements DataStore {
 
 
@@ -12,10 +15,9 @@ public class ForgetfulDataStore implements DataStore {
 	public ForgetfulDataStore() {
 		employees = new HashMap<Integer, Employee>();
 	}
-	
-	@Override
+
 	public boolean storeBooking(int employeeId, Booking booking) {
-		// TODO Auto-generated method stub
+		
 		Employee employee = employees.get(employeeId);
 		if(employee.getSchedule().tryAddClientToSchedule(booking)) {
 			return true;
@@ -23,7 +25,7 @@ public class ForgetfulDataStore implements DataStore {
 		
 		return false;
 	}
-
+	
 	@Override
 	public boolean storeNewEmployee(Employee employee) {
 		if(!employees.containsKey(employee.getId())) {
@@ -56,6 +58,13 @@ public class ForgetfulDataStore implements DataStore {
 		List<Employee> allEmployees = new ArrayList<Employee>(employees.values());
 		
 		return allEmployees;
+	}
+
+	@Override
+	public boolean deleteEmployee(int employeeId) {
+		// TODO Auto-generated method stub
+		employees.remove(employeeId);
+		return false;
 	}
 
 }

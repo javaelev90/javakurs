@@ -1,4 +1,4 @@
-package java1;
+package java1.model;
 
 public class Employee {
 	
