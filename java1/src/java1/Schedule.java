@@ -10,11 +10,14 @@ import java.util.Map;
  */
 public class Schedule {
 
-	// Date string key representing a day, which holds the clients for the day
+	// String key representing the date of a day, which holds the bookings for the
+	// day
 	private HashMap<String, List<Booking>> schedule;
+	private ScheduleLimits limits;
 
-	public Schedule() {
+	public Schedule(ScheduleLimits limits) {
 		schedule = new HashMap<String, List<Booking>>();
+		this.limits = limits;
 	}
 
 	public int getNumberOfAppointmentsOnDate(TimeSlot timeSlot) {
@@ -26,6 +29,10 @@ public class Schedule {
 	}
 
 	public boolean isTimeSlotAvailable(TimeSlot timeSlot) {
+
+		if (!limits.isWithinLimits(timeSlot))
+			return false;
+
 		String dateDay = timeSlot.getTimeSlotStart().toLocalDate().toString();
 		if (schedule.containsKey(dateDay)) {
 			List<Booking> bookings = schedule.get(dateDay);
@@ -49,7 +56,7 @@ public class Schedule {
 		}
 		String strVersion = "";
 		for (Map.Entry<String, List<Booking>> entry : schedule.entrySet()) {
-			strVersion += "-" + entry.getKey() + "\n";
+			strVersion += "-" + entry.getKey() + "(working:" + limits.toString() + ")\n";
 			for (Booking booking : entry.getValue()) {
 				strVersion += "--" + booking.getBookingTime().toString() + "\n";
 			}
@@ -76,6 +83,10 @@ public class Schedule {
 		}
 		bookings.add(booking);
 		schedule.put(date, bookings);
+	}
+
+	public ScheduleLimits getScheduleLimits() {
+		return limits;
 	}
 
 }
