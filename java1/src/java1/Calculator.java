@@ -6,7 +6,7 @@ public class Calculator {
 	private final int DIVISION_LIMIT = 2;
 	private final int MULTIPLICATION_LIMIT = 2;
 	
-	public double calculate(String input) throws ExceededNumberOfDivisionsLimitException, ExceededNumberOfMultiplicationsLimitException, CanNotDivideByZeroException{
+	public double calculate(String input) throws NumberFormatException, ExceededNumberOfDivisionsLimitException, ExceededNumberOfMultiplicationsLimitException, CanNotDivideByZeroException{
 		
 		if(InputValidator.isAddition(input)) {	
 			return addition(input);	
@@ -64,22 +64,14 @@ public class Calculator {
 		if(division.length > DIVISION_LIMIT) {
 			throw new ExceededNumberOfDivisionsLimitException();	
 		}
-		int multiplier = 1;
-		int startValue = 0;
-		if(input.charAt(0) == '-') {
-			multiplier = -1;
-		}
-		if(division[0].equals("")) {
-			startValue = 1;
-		}
-		double quotient = Double.parseDouble(division[startValue]) * multiplier;
+
+		double quotient = Double.parseDouble(division[0]);
 		if(quotient == 0) throw new CanNotDivideByZeroException();
-		for(int i = startValue+1; i < division.length; i++) {
+		for(int i = 1; i < division.length; i++) {
 			double number = Double.parseDouble(division[i]);
 			if(number == 0) throw new CanNotDivideByZeroException();
 			quotient /= Double.parseDouble(division[i]);	
 		}
-		
 		return quotient;
 	}
 
@@ -88,16 +80,9 @@ public class Calculator {
 		if(multiplication.length > MULTIPLICATION_LIMIT) {
 			throw new ExceededNumberOfMultiplicationsLimitException();	
 		}
-		double multiplier = 1.0;
-		int startValue = 0;
-		if(input.charAt(0) == '-') {
-			multiplier = -1.0;
-		}
-		if(multiplication[0].equals("")) {
-			startValue = 1;
-		}
-		double product = Double.parseDouble(multiplication[startValue]) * multiplier;
-		for(int i = startValue+1; i < multiplication.length; i++) {
+	
+		double product = Double.parseDouble(multiplication[0]);
+		for(int i = 1; i < multiplication.length; i++) {
 			product *= Double.parseDouble(multiplication[i]);
 			
 		}

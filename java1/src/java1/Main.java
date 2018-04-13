@@ -30,8 +30,8 @@ public class Main {
 							throw new TooFewArgumentsException();
 							
 						}
-						Calculator c = new Calculator();
-						System.out.println("Result " +c.calculate(text));
+						Calculator calc = new Calculator();
+						System.out.println("Result " +calc.calculate(text));
 
 						break;
 						
