@@ -30,14 +30,9 @@ public class Main {
 							throw new TooFewArgumentsException();
 							
 						}
-					
-	//					Pattern pattern = Pattern.compile("\\+");
-	//					Matcher matcher = pattern.matcher(text);
-	//					System.out.println(text.matches("\\+"));
-	//					System.out.println(matcher.find());
 						Calculator c = new Calculator();
-						System.out.println(c.calculate(text));
-						System.out.println(InputValidator.isValidInput(text));
+						System.out.println("Result " +c.calculate(text));
+
 						break;
 						
 					case '2':
@@ -51,13 +46,10 @@ public class Main {
 				} catch (TooFewArgumentsException e) {
 					System.out.println("Too few arguments in input, need a second number.");
 				} catch (MixingDifferentCalculationOperatorsException e) {
-					
 					System.out.println("You can't mix different operators.");
 				} catch (HasIllegalInput e) {
-					
 					System.out.println("You inputted illegal characters, legal chars: 0123456789+-/*.");
 				} catch (UsingOperatorAfterAnotherOperator e) {
-				
 					System.out.println("You can't use operators without a number in between, unless its a minus.");
 				} catch (ExceededNumberOfDivisionsLimitException e) {
 					System.out.println("Can only divide two numbers. E.g. 5/2");
@@ -67,10 +59,7 @@ public class Main {
 					System.out.println("Can not divide by zero.");
 				} catch (NumberFormatException e) {
 					System.out.println("NumberFormatException was thrown when parsing.");
-				} catch (EndsWithAnOperatorException e) {
-					System.out.println("Can't end input string with an operator + - / *");
 				}
-				
 				
 			
 			}

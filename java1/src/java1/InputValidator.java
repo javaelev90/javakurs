@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class InputValidator {
 
-	public static boolean isValidInput(String input) throws MixingDifferentCalculationOperatorsException, HasIllegalInput, UsingOperatorAfterAnotherOperator, EndsWithAnOperatorException {
+	public static boolean isValidInput(String input) throws MixingDifferentCalculationOperatorsException, HasIllegalInput, UsingOperatorAfterAnotherOperator {
 		input = input.replaceAll(" ", "");
 		if(hasIllegalInput(input)){
 			throw new HasIllegalInput();
@@ -16,9 +16,6 @@ public class InputValidator {
 		if(usingOperatorAfterAnotherOperator(input)) {
 			throw new UsingOperatorAfterAnotherOperator();
 		}
-//		if(isEndingWithOperator(input)) {
-//			throw new EndsWithAnOperatorException();
-//		}
 		return true;
 	}
 	
@@ -37,12 +34,6 @@ public class InputValidator {
 	
 	public static boolean isMultiplication(String input) {
 		return usingOperator(input, "\\*");
-	}
-	
-	private static boolean isEndingWithOperator(String input) {
-//		Pattern pattern = Pattern.compile("/|+|-|\\*$");
-//	    Matcher matcher = pattern.matcher(input);
-		return input.matches("[\\/\\+\\-\\\\*]$");
 	}
 	
 	private static boolean usingOperatorAfterAnotherOperator(String input) {
