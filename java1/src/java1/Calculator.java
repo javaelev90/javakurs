@@ -62,7 +62,6 @@ public class Calculator {
 		}
 
 		double quotient = Double.parseDouble(division[0]);
-		if(quotient == 0) throw new CanNotDivideByZeroException();
 		for(int i = 1; i < division.length; i++) {
 			double number = Double.parseDouble(division[i]);
 			if(number == 0) throw new CanNotDivideByZeroException();
