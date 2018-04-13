@@ -59,6 +59,10 @@ public class Main {
 					System.out.println("Can not divide by zero.");
 				} catch (NumberFormatException e) {
 					System.out.println("NumberFormatException was thrown when parsing.");
+				} catch (EndsWithOperatorException e) {
+					System.out.println("Input cant end with operator. - + / *");
+				} catch (StartsWithOperatorException e) {
+					System.out.println("Input cant start with operator. + / *");
 				}
 				
 			

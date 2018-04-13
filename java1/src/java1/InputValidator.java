@@ -5,7 +5,8 @@ import java.util.regex.Pattern;
 
 public class InputValidator {
 
-	public static boolean isValidInput(String input) throws MixingDifferentCalculationOperatorsException, HasIllegalInput, UsingOperatorAfterAnotherOperator {
+	public static boolean isValidInput(String input) throws MixingDifferentCalculationOperatorsException, 
+		HasIllegalInput, UsingOperatorAfterAnotherOperator, EndsWithOperatorException, StartsWithOperatorException {
 		input = input.replaceAll(" ", "");
 		if(hasIllegalInput(input)){
 			throw new HasIllegalInput();
@@ -15,6 +16,12 @@ public class InputValidator {
 		}
 		if(usingOperatorAfterAnotherOperator(input)) {
 			throw new UsingOperatorAfterAnotherOperator();
+		}
+		if(endsWithOperator(input)) {
+			throw new EndsWithOperatorException();
+		}
+		if(startsWithOperator(input)) {
+			throw new StartsWithOperatorException();
 		}
 		return true;
 	}
@@ -56,7 +63,17 @@ public class InputValidator {
 		return (calculationMethods > 0);
 	}
 	
+	private static boolean endsWithOperator(String input) {
+		char c = input.charAt(input.length()-1);
+		if(c == '+' || c == '/' || c == '*' || c == '-') return true;
+		return false;
+	}
 	
+	private static boolean startsWithOperator(String input) {
+		char c = input.charAt(0);
+		if(c == '+' || c == '/' || c == '*') return true;
+		return false;
+	}
 	
 	private static boolean mixingDifferentCalucaltionOperators(String input) {
 		int calculationMethods = 0;

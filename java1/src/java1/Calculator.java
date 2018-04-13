@@ -25,19 +25,14 @@ public class Calculator {
 	}
 	private double addition(String input) throws NumberFormatException{
 		String[] addition = input.split("\\+");
-		int multiplier = 1;
 		int startValue = 0;
-		if(input.charAt(0) == '-') {
-			multiplier = -1;
-		}
 		if(addition[0].equals("")) {
 			startValue = 1;
 		}
-		double sum = Double.parseDouble(addition[startValue]) * multiplier; 
+		double sum = Double.parseDouble(addition[startValue]); 
+
 		for(int i = startValue+1; i < addition.length; i++) {
-			
 			sum += Double.parseDouble(addition[i]);
-			
 		}
 		return sum;
 	}
@@ -53,6 +48,7 @@ public class Calculator {
 			startValue = 1;
 		}
 		double sum = Double.parseDouble(subtraction[startValue]) * multiplier; 
+
 		for(int i = startValue+1; i < subtraction.length; i++) {
 			sum -= Double.parseDouble(subtraction[i]);
 		}
