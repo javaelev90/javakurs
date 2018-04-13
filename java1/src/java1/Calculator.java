@@ -8,7 +8,7 @@ public class Calculator {
 	
 	public double calculate(String input) throws ExceededNumberOfDivisionsLimitException, ExceededNumberOfMultiplicationsLimitException, CanNotDivideByZeroException{
 		
-		if(InputValidator.isAddition(input) && InputValidator.isSubtraction(input)) {	
+		if(InputValidator.isAddition(input)) {	
 			return addition(input);	
 		}
 		if(InputValidator.isDivision(input)) {
