@@ -2,7 +2,7 @@ package java1;
 
 public class Employee {
 	
-	private Schedule schedule;
+	private transient Schedule schedule;
 	private int id;
 	private String firstName;
 	private String lastName;

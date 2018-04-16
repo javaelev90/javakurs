@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Each employee has a schedule
@@ -73,6 +74,23 @@ public class Schedule {
 		return false;
 	}
 
+	public boolean tryDeleteBookingFromSchedule(Booking booking) {
+		String date = booking.getBookingTime().getTimeSlotStart().toLocalDate().toString();
+		if(!schedule.containsKey(date)) {
+			return false;
+		}
+		List<Booking> bookings = schedule.get(date);
+		Optional<Booking> foundBooking = bookings.stream().filter(timeslot -> timeslot.getBookingTime().getTimeSlotStart()
+				.isEqual(booking.getBookingTime().getTimeSlotStart())).findFirst();
+		if(!foundBooking.isPresent()) {
+			return false;
+		}
+		bookings.remove(foundBooking.get());
+		return true;
+		
+	}
+	
+	
 	private void addToSchedule(Booking booking) {
 		String date = booking.getBookingTime().getTimeSlotStart().toLocalDate().toString();
 		List<Booking> bookings;
@@ -84,7 +102,7 @@ public class Schedule {
 		bookings.add(booking);
 		schedule.put(date, bookings);
 	}
-
+	
 	public ScheduleLimits getScheduleLimits() {
 		return limits;
 	}

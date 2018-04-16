@@ -1,5 +1,7 @@
 package java1;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +16,7 @@ public class ForgetfulDataStore implements DataStore {
 	}
 	
 	@Override
-	public boolean storeBooking(int employeeId, Booking booking) {
+	public boolean saveBooking(int employeeId, Booking booking) {
 		Employee employee = employees.get(employeeId);
 		if(employee.getSchedule().tryAddClientToSchedule(booking)) {
 			return true;
@@ -52,6 +54,24 @@ public class ForgetfulDataStore implements DataStore {
 		List<Employee> allEmployees = new ArrayList<Employee>(employees.values());
 		
 		return allEmployees;
+	}
+
+	@Override
+	public boolean deleteBookingOnDateTime(int employeeId, Booking booking) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<Booking> getBookingsOnDate(int employeeId, LocalDate date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Booking> getAllBooking(int employeeId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

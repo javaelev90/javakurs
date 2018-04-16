@@ -22,7 +22,7 @@ public class Application {
 			emp1.setSchedule(new Schedule(limits));
 			dataStore.storeNewEmployee(emp1);
 		} catch(DateTimeParseException exception) {
-			System.out.println("An DateTimeParseException could not parse to localtime.");
+			System.out.println("An DateTimeParseException was thrown, could not parse to localtime.");
 			return setupDone;
 		}
 
@@ -52,7 +52,7 @@ public class Application {
 		boolean wantToExit = false;
 		EmployeeHandler employeeHandler = new ForgetfulEmployeeHandler(dataStore);
 		BookingManager manager = new BookingManager(employeeHandler);
-
+		
 		try (InputHandler input = new InputHandler(new InputStreamReader(System.in));
 				MenuPrinter menu = new MenuPrinter(System.out)) {
 

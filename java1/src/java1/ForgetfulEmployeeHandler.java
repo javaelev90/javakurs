@@ -21,7 +21,7 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler {
 
 	@Override
 	public boolean bookEmployee(Employee employee, Booking booking) {
-		if (dataStore.storeBooking(employee.getId(), booking)) {
+		if (dataStore.saveBooking(employee.getId(), booking)) {
 			return true;
 		}
 		return false;
