@@ -13,7 +13,7 @@ public class Application {
 
 		dataStore = new ForgetfulDataStore();
 		try {
-			ScheduleLimits limits = new ScheduleLimits(DateTimeValidator.getValidTime("08:00"),
+			WorkingDayLimits limits = new WorkingDayLimits(DateTimeValidator.getValidTime("08:00"),
 					DateTimeValidator.getValidTime("18:00"));
 			Employee emp1 = new Employee();
 			emp1.setFirstName("Ika");

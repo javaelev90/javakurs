@@ -2,12 +2,12 @@ package java1;
 
 import java.time.LocalTime;
 
-public class ScheduleLimits {
+public class WorkingDayLimits {
 
 	private LocalTime startTime;
 	private LocalTime stopTime;
 
-	public ScheduleLimits(LocalTime startTime, LocalTime stopTime) {
+	public WorkingDayLimits(LocalTime startTime, LocalTime stopTime) {
 		this.startTime = startTime;
 		this.stopTime = stopTime;
 	}
