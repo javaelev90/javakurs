@@ -2,6 +2,7 @@ package java1;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.format.DateTimeParseException;
 
 public class Application {
 
@@ -11,15 +12,19 @@ public class Application {
 	public boolean setup() {
 
 		dataStore = new ForgetfulDataStore();
-		ScheduleLimits limits = new ScheduleLimits(DateTimeValidator.getValidTime("08:00"),
-				DateTimeValidator.getValidTime("18:00"));
-
-		Employee emp1 = new Employee();
-		emp1.setFirstName("Ika");
-		emp1.setLastName("Johansson");
-		emp1.setId(1);
-		emp1.setSchedule(new Schedule(limits));
-		dataStore.storeNewEmployee(emp1);
+		try {
+			ScheduleLimits limits = new ScheduleLimits(DateTimeValidator.getValidTime("08:00"),
+					DateTimeValidator.getValidTime("18:00"));
+			Employee emp1 = new Employee();
+			emp1.setFirstName("Ika");
+			emp1.setLastName("Johansson");
+			emp1.setId(1);
+			emp1.setSchedule(new Schedule(limits));
+			dataStore.storeNewEmployee(emp1);
+		} catch(DateTimeParseException exception) {
+			System.out.println("An DateTimeParseException could not parse to localtime.");
+			return setupDone;
+		}
 
 		// **** For more employees, uncomment these ****
 
@@ -76,9 +81,8 @@ public class Application {
 
 				}
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException exception) {
+			System.out.println("An IOException was thrown with message: "+exception.getMessage());
 		}
 	}
 

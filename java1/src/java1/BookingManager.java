@@ -2,6 +2,7 @@ package java1;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class BookingManager {
@@ -36,15 +37,16 @@ public class BookingManager {
 					stage = BookingStages.EXIT;
 					break;
 				}
-				LocalDateTime startTime = DateTimeValidator.getValidDateTime(startTimeString);
-				if (startTime == null) {
+				try {
+					LocalDateTime startTime = DateTimeValidator.getValidDateTime(startTimeString);
+					timeSlot.setTimeSlotStart(startTime);
+					// If validation worked goto next step
+					stage = BookingStages.STOPDATETIME;
+					break;
+				} catch(DateTimeParseException exception) {
 					menu.printInvalidDateTime(startTimeString);
 					break;
-				}
-				timeSlot.setTimeSlotStart(startTime);
-				// If validation worked goto next step
-				stage = BookingStages.STOPDATETIME;
-				break;
+				}	
 			case STOPDATETIME:
 				menu.printMainMenuNewBookingOptionEndTime();
 				String stopTimeString = input.getTextInput();
@@ -52,19 +54,20 @@ public class BookingManager {
 					stage = BookingStages.EXIT;
 					break;
 				}
-				LocalDateTime stopTime = DateTimeValidator.getValidDateTime(stopTimeString);
-				if (stopTime == null) {
+				try {
+					LocalDateTime stopTime = DateTimeValidator.getValidDateTime(stopTimeString);
+					if (timeSlot.getTimeSlotStart().isAfter(stopTime)) {
+						menu.printStartTimeMustBeBeforeStopTime();
+						break;
+					}
+					timeSlot.setTimeSlotTop(stopTime);
+					// If validation worked goto next step
+					stage = BookingStages.MAKEBOOKING;
+					break;
+				} catch(DateTimeParseException exception) {
 					menu.printInvalidDateTime(stopTimeString);
 					break;
-				}
-				if (timeSlot.getTimeSlotStart().isAfter(stopTime)) {
-					menu.printStartTimeMustBeBeforeStopTime();
-					break;
-				}
-				timeSlot.setTimeSlotTop(stopTime);
-				// If validation worked goto next step
-				stage = BookingStages.MAKEBOOKING;
-				break;
+				}		
 			case MAKEBOOKING:
 				List<Employee> employees = employeeHandler.getAvailableEmployees(timeSlot);
 				Employee employee = employeeHandler.getEmployeeWithFewestBookingsOnDate(timeSlot, employees);
