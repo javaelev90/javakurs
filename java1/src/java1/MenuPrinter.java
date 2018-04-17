@@ -83,6 +83,11 @@ public class MenuPrinter extends PrintWriter {
 		flush();
 	}
 
+	public void printInputHasToBeAnInteger() {
+		println("Input has to be an integer.");
+		flush();
+	}
+
 	public void printAllEmployees(List<Employee> employees) {
 		println("----All employees----");
 		if (employees.isEmpty()) {

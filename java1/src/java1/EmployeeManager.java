@@ -18,8 +18,19 @@ public class EmployeeManager {
 		if (text.equals("")) {
 			return false;
 		}
-		int id = Integer.parseInt(text);
-		return dataStore.deleteEmployee(id);
+		try {
+			int id = Integer.parseInt(text);
+			if (dataStore.deleteEmployee(id)) {
+				menu.printOperationSucceeded();
+				return true;
+			} else {
+				menu.printOperationNotSuccessful();
+				return false;
+			}
+		} catch (NumberFormatException exception) {
+			menu.printInputHasToBeAnInteger();
+			return false;
+		}
 	}
 
 	public boolean createEmployee(InputHandler input, MenuPrinter menu) throws IOException {
@@ -39,7 +50,13 @@ public class EmployeeManager {
 		}
 		newEmployee.setLastName(text);
 		newEmployee.setId(getNewEmployeeId());
-		return dataStore.storeNewEmployee(newEmployee);
+		if (dataStore.storeNewEmployee(newEmployee)) {
+			menu.printOperationSucceeded();
+			return true;
+		} else {
+			menu.printOperationNotSuccessful();
+			return false;
+		}
 	}
 
 	public boolean updateEmployee(InputHandler input, MenuPrinter menu) {

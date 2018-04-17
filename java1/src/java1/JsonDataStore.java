@@ -121,6 +121,32 @@ public class JsonDataStore implements DataStore {
 		return employees.get();
 	}
 
+	@Override
+	public boolean deleteEmployee(int employeeId) {
+		Path path = FileHandler.getFilePathToEmployeeFile();
+		Optional<List<Employee>> employees = getAllEmployeesHelper();
+		Type listType = new TypeToken<ArrayList<Employee>>() {
+		}.getType();
+		boolean employeeExist = false;
+		if (!employees.isPresent()) {
+			return false;
+		}
+		for (Employee employee : employees.get()) {
+			if (employee.getId() == employeeId) {
+				employees.get().remove(employee);
+				employeeExist = true;
+				break;
+			}
+		}
+		if (!employeeExist) {
+			return false;
+		}
+		String updatedJsonEmployees = gson.toJson(employees.get(), listType);
+		FileHandler.writeToFile(updatedJsonEmployees, path);
+		FileHandler.deleteFile(FileHandler.getFilePathForEmployeeSchedule(employeeId));
+		return true;
+	}
+
 	private Optional<List<Employee>> getAllEmployeesHelper() {
 		Path path = FileHandler.getFilePathToEmployeeFile();
 		List<Employee> employees;
@@ -137,26 +163,5 @@ public class JsonDataStore implements DataStore {
 			employees = gson.fromJson(jsonEmployees.get(), listType);
 		}
 		return Optional.of(employees);
-	}
-
-	@Override
-	public boolean deleteEmployee(int employeeId) {
-		Path path = FileHandler.getFilePathToEmployeeFile();
-		Optional<List<Employee>> employees = getAllEmployeesHelper();
-		Type listType = new TypeToken<ArrayList<Employee>>() {
-		}.getType();
-		if (!employees.isPresent()) {
-			return false;
-		}
-		for (Employee employee : employees.get()) {
-			if (employee.getId() == employeeId) {
-				employees.get().remove(employee);
-				break;
-			}
-		}
-		String updatedJsonEmployees = gson.toJson(employees.get(), listType);
-		FileHandler.writeToFile(updatedJsonEmployees, path);
-		FileHandler.deleteFile(FileHandler.getFilePathForEmployeeSchedule(employeeId));
-		return true;
 	}
 }

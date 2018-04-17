@@ -89,19 +89,9 @@ public class Application {
 				break;
 			case '2':
 				success = manager.createEmployee(input, menu);
-				if (success) {
-					menu.printOperationSucceeded();
-				} else {
-					menu.printOperationNotSuccessful();
-				}
 				break;
 			case '3':
 				success = manager.deleteEmployee(input, menu);
-				if (success) {
-					menu.printOperationSucceeded();
-				} else {
-					menu.printOperationNotSuccessful();
-				}
 				break;
 			case '4':
 				wantToExit = true;
