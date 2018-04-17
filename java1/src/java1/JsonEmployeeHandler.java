@@ -54,7 +54,6 @@ public class JsonEmployeeHandler implements EmployeeHandler {
 				employee.setSchedule(schedule);
 				availableEmployees.add(employee);
 			}
-			
 		}
 		return availableEmployees;
 	}
@@ -62,7 +61,18 @@ public class JsonEmployeeHandler implements EmployeeHandler {
 	@Override
 	public Employee getEmployeeWithFewestBookingsOnDate(TimeSlot date, List<Employee> employees) {
 		// TODO Auto-generated method stub
-		
+		int leastNumberOfBookings = Integer.MAX_VALUE;
+		if (!employees.isEmpty()) {
+			Employee employeeWithFewestBookings = employees.get(0);
+			for (int i = 0; i < employees.size(); i++) {
+				int numberOfBookings = employees.get(i).getSchedule().getNumberOfAppointmentsOnDate(date);
+				if (numberOfBookings < leastNumberOfBookings) {
+					leastNumberOfBookings = numberOfBookings;
+					employeeWithFewestBookings = employees.get(i);
+				}
+			}
+			return employeeWithFewestBookings;
+		}
 		return null;
 	}
 

@@ -70,16 +70,16 @@ public class BookingManager {
 				}		
 			case MAKEBOOKING:
 				List<Employee> employees = employeeHandler.getAvailableEmployees(timeSlot);
-				//Employee employee = employeeHandler.getEmployeeWithFewestBookingsOnDate(timeSlot, employees);
+				Employee employee = employeeHandler.getEmployeeWithFewestBookingsOnDate(timeSlot, employees);
 				
-				if (employees.isEmpty()) {
+				if (employee == null) {
 					stage = BookingStages.EXIT;
 					menu.printNoEmployeesAvailable();
 					break;
 				}
 				Booking booking = new Booking();
 				booking.setBooking(timeSlot);
-				employeeHandler.bookEmployee(employees.get(0), booking);
+				employeeHandler.bookEmployee(employee, booking);
 				stage = BookingStages.EXIT;
 				break;
 			case EXIT:

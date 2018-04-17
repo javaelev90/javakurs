@@ -19,6 +19,9 @@ public class Application {
 		System.setProperty("employeeSchedulePath", "./resources/schedule");
 		System.setProperty("employeeScheduleType", ".json");
 		System.setProperty("employeeFilePath", "./resources/employees.json");
+		//Creates employees.json if it does not exist
+		FileHandler.createFile(FileHandler.getFilePathToEmployeeFile());
+		
 		dataStore = new JsonDataStore();
 		try {
 			WorkDayLimits limits = new WorkDayLimits(DateTimeValidator.getValidTime("08:00"),
@@ -79,12 +82,11 @@ public class Application {
 					manager.showAllBookings(menu);
 					break;
 				case '3':
-					
+					manageEmployeesMenu(input, menu);
 					break;
 				case '4':
 					wantToExit = true;
 					break;
-
 				default:
 					menu.printInvalidMenuOption();
 					break;
@@ -93,6 +95,37 @@ public class Application {
 			}
 		} catch (IOException exception) {
 			System.out.println("An IOException was thrown with message: "+exception.getMessage());
+		}
+	}
+	
+	public void manageEmployeesMenu(InputHandler input, MenuPrinter menu) throws IOException {
+		EmployeeManager manager = new EmployeeManager(dataStore);
+		boolean wantToExit = false;
+		while (!wantToExit) {
+			menu.printAdministrateEmployeesMenu();
+			// Return 0 if empty choice
+			char choice = input.getChoiceInput();
+
+			switch (choice) {
+
+			case '1':
+				manager.showEmployees(menu);
+				break;
+			case '2':
+				manager.createEmployee(input, menu);
+				break;
+			case '3':
+				int employeeId = 0;
+				manager.deleteEmployee(input, menu);
+				break;
+			case '4':
+				wantToExit = true;
+				break;
+			default:
+				menu.printInvalidMenuOption();
+				break;
+
+			}
 		}
 	}
 

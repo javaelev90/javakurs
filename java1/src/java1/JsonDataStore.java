@@ -136,4 +136,23 @@ public class JsonDataStore implements DataStore {
 		}
 		return Optional.of(employees);
 	}
+
+	@Override
+	public boolean deleteEmployee(int employeeId) {
+		Path path = FileHandler.getFilePathToEmployeeFile();
+		Optional<List<Employee>> employees = getAllEmployeesHelper();
+		Type listType = new TypeToken<ArrayList<Employee>>(){}.getType();
+		if(!employees.isPresent()) {
+			return false;
+		}
+		for(Employee employee : employees.get()) {
+			if(employee.getId() == employeeId) {
+				employees.get().remove(employee);
+				break;
+			}
+		}
+		String updatedJsonEmployees = gson.toJson(employees.get(), listType);
+		FileHandler.writeToFile(updatedJsonEmployees, path);
+		return true;
+	}
 }

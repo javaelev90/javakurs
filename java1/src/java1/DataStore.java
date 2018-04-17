@@ -14,4 +14,5 @@ public interface DataStore {
 	public boolean updateEmployee(int employeeId, Employee updatedUser);
 	public Employee getEmployee(int employeeId);
 	public List<Employee> getAllEmployees();
+	public boolean deleteEmployee(int employeeId);
 }

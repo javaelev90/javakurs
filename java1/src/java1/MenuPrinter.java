@@ -18,6 +18,15 @@ public class MenuPrinter extends PrintWriter {
 		println("4. Exit");
 		flush();
 	}
+	
+	public void printAdministrateEmployeesMenu() {
+		println("----Employee administration menu----");
+		println("1. Show employees");
+		println("2. Create employee");
+		println("3. Delete employee");
+		println("4. Main menu");
+		flush();
+	}
 
 	public void printMainMenuNewBookingOptionStartTime() {
 		println("Enter a start datetime for appointment(YYYY-MM-DD HH:MM), leave empty to exit: ");
@@ -48,7 +57,7 @@ public class MenuPrinter extends PrintWriter {
 		println("Stop time has to be after start time.");
 		flush();
 	}
-
+	
 	public void printBookings(List<Employee> employees) {
 		
 		println("----Bookings per employee----");

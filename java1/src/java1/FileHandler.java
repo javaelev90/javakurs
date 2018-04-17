@@ -50,6 +50,17 @@ public class FileHandler {
 		}
 	}
 	
+	public static boolean createFile(Path path) {
+		if(doesFileExist(path)) return false;
+		try {
+			Files.createFile(path);
+			return true;
+		} catch (IOException e) {
+			System.out.format("Could not create file %s \n", path);
+			return false;
+		}
+		
+	}
 
 	private static boolean doesFileExist(Path path) {
 		return Files.exists(path);
