@@ -2,7 +2,9 @@ package java1;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.Properties;
 
 public class Application {
 
@@ -10,16 +12,22 @@ public class Application {
 	private DataStore dataStore;
 
 	public boolean setup() {
-
-		dataStore = new ForgetfulDataStore();
+		
+		
+		System.setProperty("defaultDayLimitsStart", "08:00");
+		System.setProperty("defaultDayLimitsStop", "18:00");
+		System.setProperty("employeeSchedulePath", "./resources/schedule");
+		System.setProperty("employeeScheduleType", ".json");
+		System.setProperty("employeeFilePath", "./resources/employees.json");
+		dataStore = new JsonDataStore();
 		try {
-			WorkingDayLimits limits = new WorkingDayLimits(DateTimeValidator.getValidTime("08:00"),
+			WorkDayLimits limits = new WorkDayLimits(DateTimeValidator.getValidTime("08:00"),
 					DateTimeValidator.getValidTime("18:00"));
 			Employee emp1 = new Employee();
 			emp1.setFirstName("Ika");
 			emp1.setLastName("Johansson");
 			emp1.setId(1);
-			emp1.setSchedule(new Schedule(limits));
+			//emp1.setSchedule(new Schedule());
 			dataStore.storeNewEmployee(emp1);
 		} catch(DateTimeParseException exception) {
 			System.out.println("An DateTimeParseException was thrown, could not parse to localtime.");
@@ -41,7 +49,7 @@ public class Application {
 		// emp3.setId(3);
 		// emp3.setSchedule(new Schedule(limits));
 		// dataStore.storeNewEmployee(emp3);
-
+		
 		setupDone = true;
 		return setupDone;
 	}
@@ -50,7 +58,7 @@ public class Application {
 		if (!setupDone)
 			return;
 		boolean wantToExit = false;
-		EmployeeHandler employeeHandler = new ForgetfulEmployeeHandler(dataStore);
+		EmployeeHandler employeeHandler = new JsonEmployeeHandler(dataStore);
 		BookingManager manager = new BookingManager(employeeHandler);
 		
 		try (InputHandler input = new InputHandler(new InputStreamReader(System.in));
@@ -70,8 +78,10 @@ public class Application {
 				case '2':
 					manager.showAllBookings(menu);
 					break;
-
 				case '3':
+					
+					break;
+				case '4':
 					wantToExit = true;
 					break;
 

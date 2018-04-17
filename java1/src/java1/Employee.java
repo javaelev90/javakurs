@@ -7,6 +7,8 @@ public class Employee {
 	private String firstName;
 	private String lastName;
 
+	
+	
 	public Schedule getSchedule() {
 		return schedule;
 	}
@@ -34,5 +36,9 @@ public class Employee {
 	public String getFullName() {
 		return firstName + " " + lastName;
 	}
+	public boolean equals(Employee otherEmployee) {
+		return (otherEmployee.getId() == id);
+	}
+	
 	
 }

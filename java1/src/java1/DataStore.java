@@ -8,7 +8,7 @@ public interface DataStore {
 	
 	public boolean deleteBookingOnDateTime(int employeeId, Booking booking);
 	public List<Booking> getBookingsOnDate(int employeeId, LocalDate date);
-	public List<Booking> getAllBooking(int employeeId);
+	public Schedule getSchedule(int employeeId);
 	public boolean saveBooking(int employeeId, Booking booking);
 	public boolean storeNewEmployee(Employee employee);
 	public boolean updateEmployee(int employeeId, Employee updatedUser);

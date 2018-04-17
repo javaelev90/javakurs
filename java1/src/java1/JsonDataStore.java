@@ -1,11 +1,15 @@
 package java1;
 
+import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class JsonDataStore implements DataStore {
 
@@ -17,13 +21,15 @@ public class JsonDataStore implements DataStore {
 
 	@Override
 	public boolean saveBooking(int employeeId, Booking booking) {
-
-		Path path = FileHandler.getFilePathForEmployee(employeeId);
+		
+		Schedule schedule;
+		Path path = FileHandler.getFilePathForEmployeeSchedule(employeeId);
 		Optional<String> jsonSchedule = FileHandler.readFromFile(path);
-		if (!jsonSchedule.isPresent()) {
-			return false;
+		if (jsonSchedule.isPresent()) {
+			schedule = gson.fromJson(jsonSchedule.get(), Schedule.class);
+		} else {
+			schedule = new Schedule();
 		}
-		Schedule schedule = gson.fromJson(jsonSchedule.get(), Schedule.class);
 		if (schedule.tryAddClientToSchedule(booking)) {
 			FileHandler.writeToFile(gson.toJson(schedule), path);
 			return true;
@@ -34,7 +40,7 @@ public class JsonDataStore implements DataStore {
 	@Override
 	public boolean deleteBookingOnDateTime(int employeeId, Booking booking) {
 
-		Path path = FileHandler.getFilePathForEmployee(employeeId);
+		Path path = FileHandler.getFilePathForEmployeeSchedule(employeeId);
 		Optional<String> jsonSchedule = FileHandler.readFromFile(path);
 		if (!jsonSchedule.isPresent()) {
 			return false;
@@ -49,7 +55,7 @@ public class JsonDataStore implements DataStore {
 
 	@Override
 	public List<Booking> getBookingsOnDate(int employeeId, LocalDate date) {
-		Path path = FileHandler.getFilePathForEmployee(employeeId);
+		Path path = FileHandler.getFilePathForEmployeeSchedule(employeeId);
 		Optional<String> jsonSchedule = FileHandler.readFromFile(path);
 		if (!jsonSchedule.isPresent()) {
 			return null;
@@ -59,14 +65,37 @@ public class JsonDataStore implements DataStore {
 	}
 
 	@Override
-	public List<Booking> getAllBooking(int employeeId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Schedule getSchedule(int employeeId) {
+		Path path = FileHandler.getFilePathForEmployeeSchedule(employeeId);
+		Optional<String> jsonSchedule = FileHandler.readFromFile(path);
+		if (!jsonSchedule.isPresent()) {
+			return null;
+		}
+		Schedule schedule = gson.fromJson(jsonSchedule.get(), Schedule.class);
+		return schedule;
 	}
 
 	@Override
 	public boolean storeNewEmployee(Employee employee) {
-		// TODO Auto-generated method stub
+
+		Optional<List<Employee>> employees = getAllEmployeesHelper();
+		Type listType = new TypeToken<ArrayList<Employee>>(){}.getType();
+		if(!employees.isPresent()) {
+			return false;
+		}
+		if(containsEmployeeId(employees.get(), employee)) {
+			return false;
+		}
+		employees.get().add(employee);
+		String updatedJsonEmployees = gson.toJson(employees.get(), listType);
+		FileHandler.writeToFile(updatedJsonEmployees, FileHandler.getFilePathToEmployeeFile());
+		return true;
+	}
+	
+	private boolean containsEmployeeId(List<Employee> employees, Employee employee) {
+		for(Employee emp : employees) {
+			if(emp.equals(employee)) return true;
+		}
 		return false;
 	}
 
@@ -84,7 +113,27 @@ public class JsonDataStore implements DataStore {
 
 	@Override
 	public List<Employee> getAllEmployees() {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<List<Employee>> employees = getAllEmployeesHelper();
+		if(!employees.isPresent()) {
+			return null;
+		}
+		return employees.get();
+	}
+	
+	private Optional<List<Employee>> getAllEmployeesHelper(){
+		Path path = FileHandler.getFilePathToEmployeeFile();
+		List<Employee> employees;
+		Type listType = new TypeToken<ArrayList<Employee>>(){}.getType();
+		Optional<String> jsonEmployees = FileHandler.readFromFile(path);
+		
+		if(!jsonEmployees.isPresent()) {
+			return Optional.empty();
+		}
+		if(jsonEmployees.get().equals("") || jsonEmployees.get() == null) {
+			employees = new ArrayList<Employee>();
+		} else {
+			employees = gson.fromJson(jsonEmployees.get(), listType);
+		}
+		return Optional.of(employees);
 	}
 }

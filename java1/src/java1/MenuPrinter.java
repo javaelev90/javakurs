@@ -14,7 +14,8 @@ public class MenuPrinter extends PrintWriter {
 		println("----Main menu----");
 		println("1. New Booking");
 		println("2. Show bookings");
-		println("3. Exit");
+		println("3. Administrate employees");
+		println("4. Exit");
 		flush();
 	}
 
@@ -49,6 +50,7 @@ public class MenuPrinter extends PrintWriter {
 	}
 
 	public void printBookings(List<Employee> employees) {
+		
 		println("----Bookings per employee----");
 		for (Employee employee : employees) {
 			println(employee.getFullName() + ":");

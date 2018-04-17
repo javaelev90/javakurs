@@ -2,12 +2,12 @@ package java1;
 
 import java.time.LocalTime;
 
-public class WorkingDayLimits {
+public class WorkDayLimits {
 
 	private LocalTime startTime;
 	private LocalTime stopTime;
 
-	public WorkingDayLimits(LocalTime startTime, LocalTime stopTime) {
+	public WorkDayLimits(LocalTime startTime, LocalTime stopTime) {
 		this.startTime = startTime;
 		this.stopTime = stopTime;
 	}
