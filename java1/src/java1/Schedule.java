@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * Each employee has a schedule
@@ -42,7 +41,7 @@ public class Schedule {
 		WorkDayLimits limits = getWorkDayLimitsOnDate(timeSlot);
 		if (!limits.isWithinLimits(timeSlot))
 			return false;
-		
+
 		String dateDay = timeSlot.getTimeSlotStart().toLocalDate().toString();
 		if (schedule.containsKey(dateDay)) {
 			List<Booking> bookings = schedule.get(dateDay).getBookings();
@@ -79,8 +78,8 @@ public class Schedule {
 		return true;
 
 	}
-	
-	//TODO might remake this so that it is more flexible
+
+	// TODO might re-implement this so that it is more flexible
 	private WorkDayLimits getDefaultWorkDayLimits() {
 		String startString = System.getProperty("defaultDayLimitsStart");
 		String stopString = System.getProperty("defaultDayLimitsStop");
@@ -88,15 +87,15 @@ public class Schedule {
 		LocalTime stop = DateTimeValidator.getValidTime(stopString);
 		return new WorkDayLimits(start, stop);
 	}
-	
+
 	private WorkDayLimits getWorkDayLimitsOnDate(TimeSlot timeSlot) {
 		String date = timeSlot.getTimeSlotStart().toLocalDate().toString();
-		if(!schedule.containsKey(date)) {
+		if (!schedule.containsKey(date)) {
 			return getDefaultWorkDayLimits();
 		}
 		return schedule.get(timeSlot.getTimeSlotStart().toLocalDate().toString()).getWorkingLimits();
 	}
-	
+
 	private void addToSchedule(Booking booking) {
 		String date = booking.getBookingTime().getTimeSlotStart().toLocalDate().toString();
 		List<Booking> bookings;
@@ -110,12 +109,12 @@ public class Schedule {
 		} else {
 			bookings = schedule.get(date).getBookings();
 		}
-		bookings.add(booking);	
+		bookings.add(booking);
 	}
 
 	public WorkDayLimits getScheduleLimits(LocalDate date) {
 		String dateString = date.toString();
-		if(!schedule.containsKey(dateString)) {
+		if (!schedule.containsKey(dateString)) {
 			return null;
 		}
 		return schedule.get(dateString).getWorkingLimits();

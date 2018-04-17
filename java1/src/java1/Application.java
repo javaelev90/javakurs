@@ -2,9 +2,6 @@ package java1;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
-import java.util.Properties;
 
 public class Application {
 
@@ -12,47 +9,26 @@ public class Application {
 	private DataStore dataStore;
 
 	public boolean setup() {
-		
-		
+
+		// Properties are added for ease of access
 		System.setProperty("defaultDayLimitsStart", "08:00");
 		System.setProperty("defaultDayLimitsStop", "18:00");
 		System.setProperty("employeeSchedulePath", "./resources/schedule");
 		System.setProperty("employeeScheduleType", ".json");
 		System.setProperty("employeeFilePath", "./resources/employees.json");
-		//Creates employees.json if it does not exist
+
+		// Creates employees.json if it does not exist
 		FileHandler.createFile(FileHandler.getFilePathToEmployeeFile());
-		
+
 		dataStore = new JsonDataStore();
-		try {
-			WorkDayLimits limits = new WorkDayLimits(DateTimeValidator.getValidTime("08:00"),
-					DateTimeValidator.getValidTime("18:00"));
-			Employee emp1 = new Employee();
-			emp1.setFirstName("Ika");
-			emp1.setLastName("Johansson");
-			emp1.setId(1);
-			//emp1.setSchedule(new Schedule());
-			dataStore.storeNewEmployee(emp1);
-		} catch(DateTimeParseException exception) {
-			System.out.println("An DateTimeParseException was thrown, could not parse to localtime.");
-			return setupDone;
-		}
 
-		// **** For more employees, uncomment these ****
+		// Default employee which is added for convenience
+		Employee emp = new Employee();
+		emp.setFirstName("Ika");
+		emp.setLastName("Johansson");
+		emp.setId(1);
+		dataStore.storeNewEmployee(emp);
 
-		// Employee emp2 = new Employee();
-		// emp2.setFirstName("Inga");
-		// emp2.setLastName("Lund");
-		// emp2.setId(2);
-		// emp2.setSchedule(new Schedule(limits));
-		// dataStore.storeNewEmployee(emp2);
-
-		// Employee emp3 = new Employee();
-		// emp3.setFirstName("Yen");
-		// emp3.setLastName("Chan");
-		// emp3.setId(3);
-		// emp3.setSchedule(new Schedule(limits));
-		// dataStore.storeNewEmployee(emp3);
-		
 		setupDone = true;
 		return setupDone;
 	}
@@ -61,9 +37,8 @@ public class Application {
 		if (!setupDone)
 			return;
 		boolean wantToExit = false;
-		EmployeeHandler employeeHandler = new JsonEmployeeHandler(dataStore);
-		BookingManager manager = new BookingManager(employeeHandler);
-		
+		BookingManager manager = new BookingManager(dataStore);
+
 		try (InputHandler input = new InputHandler(new InputStreamReader(System.in));
 				MenuPrinter menu = new MenuPrinter(System.out)) {
 
@@ -94,13 +69,14 @@ public class Application {
 				}
 			}
 		} catch (IOException exception) {
-			System.out.println("An IOException was thrown with message: "+exception.getMessage());
+			System.out.println("An IOException was thrown with message: " + exception.getMessage());
 		}
 	}
-	
+
 	public void manageEmployeesMenu(InputHandler input, MenuPrinter menu) throws IOException {
 		EmployeeManager manager = new EmployeeManager(dataStore);
 		boolean wantToExit = false;
+		boolean success = false;
 		while (!wantToExit) {
 			menu.printAdministrateEmployeesMenu();
 			// Return 0 if empty choice
@@ -112,11 +88,20 @@ public class Application {
 				manager.showEmployees(menu);
 				break;
 			case '2':
-				manager.createEmployee(input, menu);
+				success = manager.createEmployee(input, menu);
+				if (success) {
+					menu.printOperationSucceeded();
+				} else {
+					menu.printOperationNotSuccessful();
+				}
 				break;
 			case '3':
-				int employeeId = 0;
-				manager.deleteEmployee(input, menu);
+				success = manager.deleteEmployee(input, menu);
+				if (success) {
+					menu.printOperationSucceeded();
+				} else {
+					menu.printOperationNotSuccessful();
+				}
 				break;
 			case '4':
 				wantToExit = true;

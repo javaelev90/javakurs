@@ -4,7 +4,6 @@ import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public class JsonDataStore implements DataStore {
 
 	@Override
 	public boolean saveBooking(int employeeId, Booking booking) {
-		
+
 		Schedule schedule;
 		Path path = FileHandler.getFilePathForEmployeeSchedule(employeeId);
 		Optional<String> jsonSchedule = FileHandler.readFromFile(path);
@@ -79,11 +78,12 @@ public class JsonDataStore implements DataStore {
 	public boolean storeNewEmployee(Employee employee) {
 
 		Optional<List<Employee>> employees = getAllEmployeesHelper();
-		Type listType = new TypeToken<ArrayList<Employee>>(){}.getType();
-		if(!employees.isPresent()) {
+		Type listType = new TypeToken<ArrayList<Employee>>() {
+		}.getType();
+		if (!employees.isPresent()) {
 			return false;
 		}
-		if(containsEmployeeId(employees.get(), employee)) {
+		if (containsEmployeeId(employees.get(), employee)) {
 			return false;
 		}
 		employees.get().add(employee);
@@ -91,10 +91,11 @@ public class JsonDataStore implements DataStore {
 		FileHandler.writeToFile(updatedJsonEmployees, FileHandler.getFilePathToEmployeeFile());
 		return true;
 	}
-	
+
 	private boolean containsEmployeeId(List<Employee> employees, Employee employee) {
-		for(Employee emp : employees) {
-			if(emp.equals(employee)) return true;
+		for (Employee emp : employees) {
+			if (emp.equals(employee))
+				return true;
 		}
 		return false;
 	}
@@ -114,22 +115,23 @@ public class JsonDataStore implements DataStore {
 	@Override
 	public List<Employee> getAllEmployees() {
 		Optional<List<Employee>> employees = getAllEmployeesHelper();
-		if(!employees.isPresent()) {
+		if (!employees.isPresent()) {
 			return null;
 		}
 		return employees.get();
 	}
-	
-	private Optional<List<Employee>> getAllEmployeesHelper(){
+
+	private Optional<List<Employee>> getAllEmployeesHelper() {
 		Path path = FileHandler.getFilePathToEmployeeFile();
 		List<Employee> employees;
-		Type listType = new TypeToken<ArrayList<Employee>>(){}.getType();
+		Type listType = new TypeToken<ArrayList<Employee>>() {
+		}.getType();
 		Optional<String> jsonEmployees = FileHandler.readFromFile(path);
-		
-		if(!jsonEmployees.isPresent()) {
+
+		if (!jsonEmployees.isPresent()) {
 			return Optional.empty();
 		}
-		if(jsonEmployees.get().equals("") || jsonEmployees.get() == null) {
+		if (jsonEmployees.get().equals("") || jsonEmployees.get() == null) {
 			employees = new ArrayList<Employee>();
 		} else {
 			employees = gson.fromJson(jsonEmployees.get(), listType);
@@ -141,18 +143,20 @@ public class JsonDataStore implements DataStore {
 	public boolean deleteEmployee(int employeeId) {
 		Path path = FileHandler.getFilePathToEmployeeFile();
 		Optional<List<Employee>> employees = getAllEmployeesHelper();
-		Type listType = new TypeToken<ArrayList<Employee>>(){}.getType();
-		if(!employees.isPresent()) {
+		Type listType = new TypeToken<ArrayList<Employee>>() {
+		}.getType();
+		if (!employees.isPresent()) {
 			return false;
 		}
-		for(Employee employee : employees.get()) {
-			if(employee.getId() == employeeId) {
+		for (Employee employee : employees.get()) {
+			if (employee.getId() == employeeId) {
 				employees.get().remove(employee);
 				break;
 			}
 		}
 		String updatedJsonEmployees = gson.toJson(employees.get(), listType);
 		FileHandler.writeToFile(updatedJsonEmployees, path);
+		FileHandler.deleteFile(FileHandler.getFilePathForEmployeeSchedule(employeeId));
 		return true;
 	}
 }
