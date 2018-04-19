@@ -30,15 +30,27 @@ public class Program {
 		description = "A Yellow-ball";
 		Item yellowball = new Item(artnr, price, description);
 		
+		artnr = 6;
+		price = 9.50;
+		description = "A Yellow-ball3";
+		Item yellowball3 = new Item(artnr, price, description);
+		
+		artnr = 5;
+		price = 11.00;
+		description = "A Baseballracket 1";
+		Item baseballracket = new Item(artnr, price, description);
+		
 		artnr = 4;
 		price = 11.00;
-		description = "A Baseballracket";
-		Item baseballracket = new Item(artnr, price, description);
+		description = "A Baseballracket 4";
+		Item wacko = new Item(artnr, price, description);
 		
 		storage.addObject(yellowball);
 		storage.addObject(ball);
 		storage.addObject(apple);
 		storage.addObject(baseballracket);
+		storage.addObject(wacko);
+		storage.addObject(yellowball3);
 		
 		try(InputHandler handler = new InputHandler(new InputStreamReader(System.in))){
 			boolean wantToExit = false;

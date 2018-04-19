@@ -28,13 +28,32 @@ public class ItemStorage extends Storage<Item> {
 			int id = Integer.parseInt(matcher.group());
 			foundIntegers.add(id);
 		}
+		String noNumbers = searchString.replaceAll("[0-9]+", "");
+		String[] splitString = noNumbers.split(" ");
 		for(Item item : storage) {
+			
 			if(item.getDescription().toLowerCase().matches("(.*)"+searchString.toLowerCase()+"(.*)")) {
-				items.add(item);
+				if(!items.contains(item)) {
+					items.add(item);
+				}
+			}
+			if((!noNumbers.equals(""))&& item.getDescription().toLowerCase().matches("(.*)"+noNumbers.toLowerCase()+"(.*)")) {
+				if(!items.contains(item)) {
+					items.add(item);
+				}		
+			}
+			for(String words : splitString) {
+				if(!words.equals("") && item.getDescription().toLowerCase().matches("(.*)"+words.toLowerCase()+"(.*)")) {
+					if(!items.contains(item)) {
+						items.add(item);
+					}		
+				}
 			}
 			for(Integer integer : foundIntegers) {
 				if(item.getArtNumber() == integer) {
-					items.add(item);
+					if(!items.contains(item)) {
+						items.add(item);
+					}
 				}
 			}	
 		}
