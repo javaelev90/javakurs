@@ -21,8 +21,8 @@ public class Elevator implements Runnable{
 	
 	public Elevator(int numberOfLevels, int startingLevel) {
 		
-		if(numberOfLevels < 1) {
-			throw new IllegalArgumentException("Number of levels can't be less than 1.");
+		if(numberOfLevels < 2) {
+			throw new IllegalArgumentException("Number of levels can't be less than 2.");
 		}
 		if(startingLevel < 0) {
 			throw new IllegalArgumentException("Starting level can't be less than 0.");
