@@ -5,20 +5,23 @@ import java.io.InputStreamReader;
 
 public class Application {
 
-	private boolean setupDone = false;
 	private DataStore dataStore;
 
 	public boolean setup() {
 
 		// Properties are added for ease of access
-		System.setProperty("defaultDayLimitsStart", "08:00");
-		System.setProperty("defaultDayLimitsStop", "18:00");
-		System.setProperty("employeeSchedulePath", "./resources/schedule");
-		System.setProperty("employeeScheduleType", ".json");
-		System.setProperty("employeeFilePath", "./resources/employees.json");
-
+//		System.setProperty("defaultDayLimitsStart", "08:00");
+//		System.setProperty("defaultDayLimitsStop", "18:00");
+//		System.setProperty("employeeSchedulePath", "./resources/schedule");
+//		System.setProperty("employeeScheduleType", ".json");
+//		System.setProperty("employeeFilePath", "./resources/employees.json");
+		if(!AppProperties.loadProperties()) {
+			return false;
+		}
+		
 		// Creates employees.json if it does not exist
 		FileHandler.createFile(FileHandler.getFilePathToEmployeeFile());
+	
 
 		dataStore = new JsonDataStore();
 
@@ -29,13 +32,14 @@ public class Application {
 		emp.setId(1);
 		dataStore.storeNewEmployee(emp);
 
-		setupDone = true;
-		return setupDone;
+		return true;
 	}
 
 	public void run() {
-		if (!setupDone)
+		if (!setup()) {
+			System.out.println("Setup did not finish, application will shut down.");
 			return;
+		}
 		boolean wantToExit = false;
 		BookingManager manager = new BookingManager(dataStore);
 

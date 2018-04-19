@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 public class FileHandler {
@@ -67,13 +68,21 @@ public class FileHandler {
 	}
 
 	public static Path getFilePathForEmployeeSchedule(int employeeId) {
-		String path = System.getProperty("employeeSchedulePath");
-		String type = System.getProperty("employeeScheduleType");
+		Optional<Properties> props = AppProperties.getProperties();
+		if(!props.isPresent()) {
+			return null;
+		}
+		String path = props.get().getProperty("employeeSchedulePath");
+		String type = props.get().getProperty("employeeScheduleType");
 		return Paths.get(path + employeeId + type);
 	}
 
 	public static Path getFilePathToEmployeeFile() {
-		String path = System.getProperty("employeeFilePath");
+		Optional<Properties> props = AppProperties.getProperties();
+		if(!props.isPresent()) {
+			return null;
+		}
+		String path = props.get().getProperty("employeeFilePath");
 		return Paths.get(path);
 	}
 }

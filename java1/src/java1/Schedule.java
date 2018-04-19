@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Each employee has a schedule
@@ -81,8 +82,12 @@ public class Schedule {
 
 	// TODO might re-implement this so that it is more flexible
 	private WorkDayLimits getDefaultWorkDayLimits() {
-		String startString = System.getProperty("defaultDayLimitsStart");
-		String stopString = System.getProperty("defaultDayLimitsStop");
+		Optional<Properties> props = AppProperties.getProperties();
+		if(!props.isPresent()) {
+			return null;
+		}
+		String startString = props.get().getProperty("defaultDayLimitsStart");
+		String stopString = props.get().getProperty("defaultDayLimitsStop");
 		LocalTime start = DateTimeValidator.getValidTime(startString);
 		LocalTime stop = DateTimeValidator.getValidTime(stopString);
 		return new WorkDayLimits(start, stop);
