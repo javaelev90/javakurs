@@ -116,6 +116,7 @@ public class Program {
 					wantToExit = true;
 					break;
 				default:
+					System.out.println("Invalid menu option.");
 					break;
 								
 				}		
