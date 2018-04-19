@@ -33,8 +33,12 @@ public class ShoppingCart extends Storage<Item> {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		for(Item item : storage) {
-			builder.append("\n"+item.toString());
+			builder.append(item.toString());
 		}
 		return builder.toString();
+	}
+	
+	public boolean isEmpty() {
+		return storage.isEmpty();
 	}
 }

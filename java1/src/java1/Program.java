@@ -49,7 +49,7 @@ public class Program {
 				switch(choice) {
 				
 				case '1':
-					System.out.println("Add an item to shopping cart by entering artNumber: ");
+					System.out.println("Add an item to your shopping cart by entering artNumber: ");
 					Optional<Integer> artNumber = handler.getArtNumberInput();
 					if(!artNumber.isPresent()) {
 						break;
@@ -59,10 +59,12 @@ public class Program {
 						System.out.format("\nAn item with artNumber %d does not exits.", artNumber.get());
 						break;
 					}
+					System.out.println("Added the following object to your shopping cart: ");
+					System.out.println(storedItem.get().toString());
 					cart.addObject(storedItem.get());
 					break;
 				case '2':
-					System.out.println("Remove an item from shopping cart by entering artNumber: ");
+					System.out.println("Remove an item from your shopping cart by entering artNumber: ");
 					artNumber = handler.getArtNumberInput();
 					if(!artNumber.isPresent()) {
 						break;
@@ -72,13 +74,21 @@ public class Program {
 						System.out.format("\nAn item with artNumber %d does not exits.", artNumber.get());
 						break;
 					}
+					System.out.println("Removed the following object from your shopping cart: ");
+					System.out.println(storedItem.get().toString());
 					storage.addObject(storedItem.get());
 					break;
-				case '3':
-					System.out.println(cart.toString());
+				case '3':	
+					if(cart.isEmpty()) {
+						System.out.println("Shopping cart is empty.");
+					} else {
+						System.out.println("--Shopping cart items--");
+						System.out.println(cart.toString());
+					}			
 					break;
 				case '4':
-					System.out.println("Input search string to search storage(leave empty for everything)");
+					System.out.println("Input search string to search the storage(leave empty for everything)");
+					System.out.println("For best result, enter either an artNumber or a search text");
 					String searchString = handler.getTextInput();
 					List<Item> items = storage.searchStorage(searchString);
 					if(items.isEmpty()) {
