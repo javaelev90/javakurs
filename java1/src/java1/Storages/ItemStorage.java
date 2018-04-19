@@ -19,6 +19,18 @@ public class ItemStorage extends Storage<Item> {
 		return Optional.empty();
 	}
 	
+	public List<Item> searchStorageOnArtNumber(int artNumber){
+		List<Item> items = new ArrayList<Item>();
+		for(Item item : storage) {
+			if(item.getArtNumber() == artNumber) {
+				if(!items.contains(item)) {
+					items.add(item);
+				}
+			}
+		}
+		return items;
+	}
+	
 	public List<Item> searchStorage(String searchString){
 		List<Item> items = new ArrayList<Item>();
 		Pattern pattern = Pattern.compile("[0-9]+");

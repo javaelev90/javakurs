@@ -98,16 +98,8 @@ public class Program {
 						System.out.println(cart.toString());
 					}			
 					break;
-				case '4':
-					System.out.println("Input search string to search the storage(leave empty for everything)");
-					System.out.println("For best result, enter either an artNumber or a search text");
-					String searchString = handler.getTextInput();
-					List<Item> items = storage.searchStorage(searchString);
-					if(items.isEmpty()) {
-						System.out.println("The search yielded no results.");
-						break;
-					}
-					items.forEach(foundItem -> System.out.println(foundItem.toString()));
+				case '4':	
+					searchMenu(handler, storage);
 					break;
 				case '5':
 					System.out.println(cart.checkOut());
@@ -125,6 +117,59 @@ public class Program {
 			System.out.println("An IOException was caught, when reading from System.in");
 		}
 
+	}
+	
+	public static void searchMenu(InputHandler handler, ItemStorage storage) throws IOException {
+		
+		boolean wantToExit = false;
+		while(!wantToExit) {
+			
+			printSearchMenu();
+			char choice = handler.getChoiceInput();
+			switch(choice) {
+			
+			case '1':
+				System.out.println("Input artNumber to look for");
+				String searchString = handler.getTextInput();
+				try {
+					int artNumber = Integer.parseInt(searchString);
+					List<Item> items = storage.searchStorageOnArtNumber(artNumber);
+					if(items.isEmpty()) {
+						System.out.println("The search yielded no results.");
+						break;
+					}
+					items.forEach(foundItem -> System.out.println(foundItem.toString()));
+					break;
+				} catch(NumberFormatException exception) {
+					System.out.println("You have to input an integer.");
+					break;
+				}	
+				
+			case '2':
+				System.out.println("Input search string to search the storage(leave empty for everything)");
+				searchString = handler.getTextInput();
+				List<Item> items = storage.searchStorage(searchString);
+				if(items.isEmpty()) {
+					System.out.println("The search yielded no results.");
+					break;
+				}
+				items.forEach(foundItem -> System.out.println(foundItem.toString()));
+				break;
+			case '3':
+				wantToExit = true;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	
+	public static void printSearchMenu() {
+		System.out.println("\n----Search Menu----");
+		System.out.println("1. Search for artNumber");
+		System.out.println("2. Search with free text");
+		System.out.println("3. Main menu");
 	}
 	
 	public static void printMainMenu() {
