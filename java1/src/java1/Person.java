@@ -10,10 +10,15 @@ public class Person implements Runnable{
 	private boolean chosenDestination;
 	private int destinationLevel;
 	private int originLevel;
+	private String name;
+	private boolean reachedDestination;
 	
-	public Person(int originLevel) {
+	public Person(String name, int originLevel, int destinationLevel) {
 		inElevator = false;
 		this.originLevel = originLevel;
+		this.destinationLevel = destinationLevel;
+		reachedDestination = false;
+		this.name = name;
 	}
 
 	
@@ -21,22 +26,28 @@ public class Person implements Runnable{
 		return originLevel;
 	}
 	
-	public Person onElevatorDoorsOpening() {
+	public void elevatorDoorsOpening(Elevator elevator) {
 		if(!inElevator) {
-			System.out.println("Entering elevator");
+			System.out.println(name+" is entering elevator");
+			elevator.enterElevator(this);
 			inElevator = true;
-			return this;
 		} else {
-			System.out.println("Leaving elevator");
-			return null;
+			System.out.println(name+" is leaving elevator");
+			elevator.leaveElevator(this);
+			reachedDestination = true;
+			inElevator = false;
 		}	
 	}
 	
-	public Optional<Integer> getdestinationLevel() {
-		if(chosenDestination) {
-			return Optional.of(destinationLevel);
-		} 
-		return Optional.empty();
+//	public Optional<Integer> getdestinationLevel() {
+//		if(chosenDestination) {
+//			return Optional.of(destinationLevel);
+//		} 
+//		return Optional.empty();
+//	}
+	
+	public int getDestinationLevel() {
+		return destinationLevel;
 	}
 	
 	
@@ -49,15 +60,23 @@ public class Person implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true) {
+		while(!reachedDestination) {
 			try {
-				System.out.println("Waiting");
-				Thread.sleep(500);
+				System.out.println(name+" is waiting "+(inElevator ? "in the elevator" : "on the elevator"));
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Reached destination: ");
+		System.out.println(toString());
 	}
-
+	
+	public String toString() {
+		return "\nName: "+name
+				+"\nOrigin: "+originLevel
+				+"\nDestination: "+destinationLevel;
+				
+	}
 }

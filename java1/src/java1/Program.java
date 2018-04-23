@@ -7,13 +7,13 @@ public class Program {
 
 	public static void main(String[] args) throws InterruptedException {
 
-		Elevator elevator = new Elevator(2);
+		Elevator elevator = new Elevator(0);
 		
 		Thread thread = new Thread(elevator);
 		thread.start();
 		Thread.sleep(1000);
-		Person person = new Person(2);
-		Person person2 = new Person(1);
+		Person person = new Person("Pelle",2, 4);
+		Person person2 = new Person("Ingvar",1, 3);
 		
 		Thread thread2 = new Thread(person);
 		Thread thread3 = new Thread(person2);
@@ -26,7 +26,7 @@ public class Program {
 		people.add(person2);
 		
 		for(Person p : people) {
-			Thread.sleep(1000);
+			Thread.sleep(1);
 			
 			elevator.clickCallButton(new ElevatorCall(p, p.getOriginLevel()));
 		}
