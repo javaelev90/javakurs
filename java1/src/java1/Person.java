@@ -1,13 +1,11 @@
 package java1;
 
-import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.Callable;
 
 public class Person implements Runnable{
 	
 	private boolean inElevator;
-	private boolean chosenDestination;
+//	private boolean chosenDestination;
 	private int destinationLevel;
 	private int originLevel;
 	private String name;
@@ -39,44 +37,37 @@ public class Person implements Runnable{
 		}	
 	}
 	
-//	public Optional<Integer> getdestinationLevel() {
-//		if(chosenDestination) {
-//			return Optional.of(destinationLevel);
-//		} 
-//		return Optional.empty();
-//	}
-	
 	public int getDestinationLevel() {
 		return destinationLevel;
 	}
 	
-	
-	public int chooseDestination(int[] listOfLevels) {
-		destinationLevel = new Random().nextInt(listOfLevels.length);
-		chosenDestination = true;
-		return destinationLevel;
+	public String getName() {
+		return name;
 	}
+	
+//	public int chooseDestination(int[] listOfLevels) {
+//		destinationLevel = new Random().nextInt(listOfLevels.length);
+//		chosenDestination = true;
+//		return destinationLevel;
+//	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		while(!reachedDestination) {
-			try {
-				System.out.println(name+" is waiting "+(inElevator ? "in the elevator" : "on the elevator"));
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			//System.out.println(name+" is waiting "+(inElevator ? "in the elevator" : "on the elevator"));
+			
 		}
-		System.out.println("Reached destination: ");
-		System.out.println(toString());
+		
+		//System.out.println("Reached destination:"+toString());
 	}
 	
 	public String toString() {
 		return "\nName: "+name
 				+"\nOrigin: "+originLevel
-				+"\nDestination: "+destinationLevel;
+				+"\nDestination: "+destinationLevel
+				+"\n";
 				
 	}
 }

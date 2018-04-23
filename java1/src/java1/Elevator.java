@@ -3,7 +3,6 @@ package java1;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -12,13 +11,14 @@ public class Elevator implements Runnable{
 
 	private static enum ElevatorState {NOTMOVING, MOVINGUP, MOVINGDOWN };
 	
-	private static int[] numberOfLevels = {0,1,2,3};
+	private static int[] numberOfLevels = {0,1,2,3,4,5,6};
 	private int currentLevel;
 	private boolean elevatorOn;
 	private ElevatorState currentState;
 	private List<Person> peopleInElevator;
 	private List<ElevatorCall> queue;
 	private AtomicBoolean areDoorsOpen;
+	private Set<Integer> destinations;
 	
 	public Elevator(int startingLevel) {
 		
@@ -30,7 +30,7 @@ public class Elevator implements Runnable{
 		}
 		currentLevel = startingLevel;
 		currentState = ElevatorState.NOTMOVING;
-
+		destinations = new HashSet<Integer>();
 	}
 
 	@Override
@@ -53,8 +53,12 @@ public class Elevator implements Runnable{
 				System.out.println("Current Level:" + currentLevel);
 				
 				if(shouldOpenDoors()) {
+					synchronized(destinations) {
+						destinations.remove(new Integer(currentLevel));
+					}
 					System.out.println("Opening doors..");
 					areDoorsOpen.set(true);
+
 //					Thread.sleep(100); //Opening time
 					
 					
@@ -66,6 +70,9 @@ public class Elevator implements Runnable{
 					
 					
 				}
+				//Update state
+				//System.out.println("Update state");
+				updateElevatorState();
 //				Thread.sleep(1000);
 				switch(currentState) {
 				case MOVINGUP:
@@ -82,9 +89,9 @@ public class Elevator implements Runnable{
 				}
 				
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("An InterruptedException was thrown");
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("An Exception was thrown");
 			}
 					
 		}	
@@ -95,7 +102,10 @@ public class Elevator implements Runnable{
 		synchronized(peopleInElevator) {
 			if(areDoorsOpen.get()) {
 				peopleInElevator.add(person);
-				//person.chooseDestination(numberOfLevels);
+				synchronized(destinations) {
+					destinations.add(person.getDestinationLevel());
+					System.out.println(person.getName() + " wants to go to level " + person.getDestinationLevel());
+				}
 			}	
 		}
 	}
@@ -141,120 +151,94 @@ public class Elevator implements Runnable{
 		currentLevel--;
 	}
 	
-	private boolean shouldOpenDoors() {
-		boolean openDoors = false;
-		switch(currentState) {
-		
-		case MOVINGUP:
-			//Stop at levels where a person wants to get off and pick up people who want to go up, continue to highest call
-			//then switch to moving down if queue is not empty
-			int highestLevel = currentLevel;
-		
-			synchronized(queue){
-				synchronized(peopleInElevator) {
-					for(ElevatorCall call : queue) {
-						int personLevel = call.getPersonLevel();
-						if(personLevel == currentLevel) {
-							openDoors = true;
-						} 
-						if(personLevel > highestLevel) {
-							highestLevel = personLevel;
-						}
+	private void updateElevatorState() {
+		synchronized(destinations) {
+			//If there are no destinations then the elevator should not move
+			if(destinations.isEmpty()) {
+				currentState = ElevatorState.NOTMOVING;
+			}
+			int higestDestination = currentLevel;
+			int lowestDestination = currentLevel;
+			switch(currentState) {
+			case MOVINGUP:	
+				for(Integer integer : destinations) {
+					if(integer > higestDestination) {
+						higestDestination = integer;
 					}
-					for(Person person : peopleInElevator) {
-						int destination = person.getDestinationLevel();
-//						if(destination.isPresent()) {
-							if(destination == currentLevel) {
-								openDoors = true;
-							} 
-							if(destination > highestLevel) {
-								highestLevel = destination;
-							}
-//						}
+				}
+				if(higestDestination == currentLevel) {
+					currentState = ElevatorState.MOVINGDOWN;
+				}
+				break;
+			case MOVINGDOWN:
+				for(Integer integer : destinations) {
+					if(integer < lowestDestination) {
+						lowestDestination = integer;
 					}
-					if(highestLevel == currentLevel && queue.isEmpty() && peopleInElevator.isEmpty()) {
-						currentState = ElevatorState.NOTMOVING;
-					} else if(highestLevel > currentLevel){
+				}
+				if(lowestDestination == currentLevel) {
+					currentState = ElevatorState.MOVINGUP;
+				}
+				break;
+			case NOTMOVING:
+				if(!destinations.isEmpty()) {
+					int closest = findClosestLevel(destinations);
+					if(currentLevel < closest) {
 						currentState = ElevatorState.MOVINGUP;
-					} else {
+					} else if(currentLevel > closest) {
 						currentState = ElevatorState.MOVINGDOWN;
 					}
 				}
+				break;
 			}
-			return openDoors;
-
-		case MOVINGDOWN:
-			//Stop at levels where a person want to get on(if they want to go down)/off and continue down to lowest destination
-			
-			int lowestLevel = currentLevel;
-			synchronized(queue){	
-				synchronized(peopleInElevator) {
-					for(ElevatorCall call : queue) {
-						int personLevel = call.getPersonLevel();
-						if(personLevel == currentLevel) {
-							openDoors = true;
-						} 
-						if(personLevel < lowestLevel) {
-							lowestLevel = personLevel;
-						}
-					}
-					for(Person person : peopleInElevator) {
-//						Optional<Integer> destination = person.getdestinationLevel();
-						int destination = person.getDestinationLevel();
-//						if(destination.isPresent()) {
-							int personDestination = destination;
-							if(destination == currentLevel) {
-								openDoors = true;
-							} 
-							if(personDestination < lowestLevel) {
-								lowestLevel = personDestination;
-							}
-//						}
-					}
-					
-					if(lowestLevel == currentLevel && queue.isEmpty() && peopleInElevator.isEmpty()) {
-						currentState = ElevatorState.NOTMOVING;
-					} else if(lowestLevel < currentLevel){
-						currentState = ElevatorState.MOVINGDOWN;
-					} else {
-						currentState = ElevatorState.MOVINGUP;
-					}
-					
-				}
-			}
-			return openDoors;
-			
-		case NOTMOVING:
-			//Look through all calls and choose the closest one to move at
-			synchronized(queue) {
-				if(!queue.isEmpty()) {
-					int level = queue.get(0).getPersonLevel();
-					if(level < currentLevel) {
-						currentState = ElevatorState.MOVINGDOWN;
-					} else if(level > currentLevel) {
-						currentState = ElevatorState.MOVINGUP;
-					} else {
-						openDoors = true;
-					}
-				}
-			}
-				
-			return openDoors;
-		
-		default:
-			return openDoors;
 		}
-		
 	}
 	
+	private int findClosestLevel(Set<Integer> destinations) {
+		int closest = numberOfLevels.length;
+		for(Integer integer : destinations) {
+			int difference = Math.abs(currentLevel - integer);
+			if(difference < closest) {
+				closest = integer;
+			}
+		}
+		return closest;
+	}
+	
+	private boolean shouldOpenDoors() {
+		boolean openDoors = false;
+		
+		synchronized(queue){
+			synchronized(peopleInElevator) {
+				for(ElevatorCall call : queue) {
+					int personLevel = call.getPersonLevel();
+					if(personLevel == currentLevel) {
+						openDoors = true;
+					} 
+				}
+				for(Person person : peopleInElevator) {
+					int destination = person.getDestinationLevel();
+
+					if(destination == currentLevel) {
+						openDoors = true;
+					} 
+				}
+			}
+		}
+		return openDoors;
+	}
+
 	public void turnOffElevator() {
 		elevatorOn = false;
 	}
 	
 	public void clickCallButton(ElevatorCall call) throws InterruptedException {
 		synchronized(queue) {
-			queue.add(call);
-			queue.notify();
+			synchronized(destinations) {
+				queue.add(call);
+				destinations.add(call.getPersonLevel());
+				queue.notify();
+			}
 		}
 	}
 
