@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class WorkDay {
-	// TODO should replace shedulelimits
+	
 	private LocalDate date;
 	private WorkDayLimits workingLimits;
 	private List<Booking> bookings;

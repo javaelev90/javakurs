@@ -2,7 +2,9 @@ package java1;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EmployeeManager {
 
@@ -70,24 +72,23 @@ public class EmployeeManager {
 
 	private int getNewEmployeeId() {
 		List<Employee> employees = dataStore.getAllEmployees();
-		List<Integer> ids = new ArrayList<Integer>();
+		if(employees.isEmpty()) {
+			return 0;
+		}
+		
+		Set<Integer> ids = new HashSet<Integer>();
 		for (Employee employee : employees) {
 			ids.add(employee.getId());
 		}
-		ids.sort(null);
-		int start = 0;
 		int newId = 0;
+		int counter = 0;
 		for (Integer i : ids) {
-			if (start + 1 == i) {
-				start = i;
-			} else {
-				newId = start + 1;
+			if (counter != i) {
 				break;
 			}
+			counter++;
 		}
-		if (newId == 0) {
-			newId = ids.get(ids.size() - 1) + 1;
-		}
+		newId = counter;
 		return newId;
 	}
 }

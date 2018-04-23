@@ -10,11 +10,6 @@ public class Application {
 	public boolean setup() {
 
 		// Properties are added for ease of access
-//		System.setProperty("defaultDayLimitsStart", "08:00");
-//		System.setProperty("defaultDayLimitsStop", "18:00");
-//		System.setProperty("employeeSchedulePath", "./resources/schedule");
-//		System.setProperty("employeeScheduleType", ".json");
-//		System.setProperty("employeeFilePath", "./resources/employees.json");
 		if(!AppProperties.loadProperties()) {
 			return false;
 		}
@@ -25,12 +20,12 @@ public class Application {
 
 		dataStore = new JsonDataStore();
 
-		// Default employee which is added for convenience
-		Employee emp = new Employee();
-		emp.setFirstName("Ika");
-		emp.setLastName("Johansson");
-		emp.setId(1);
-		dataStore.storeNewEmployee(emp);
+		// Default employee which could be added for convenience
+//		Employee emp = new Employee();
+//		emp.setFirstName("Ika");
+//		emp.setLastName("Johansson");
+//		emp.setId(1);
+//		dataStore.storeNewEmployee(emp);
 
 		return true;
 	}
@@ -56,7 +51,6 @@ public class Application {
 				case '1':
 					manager.tryToBookTime(input, menu);
 					break;
-
 				case '2':
 					manager.showAllBookings(menu);
 					break;
@@ -80,7 +74,6 @@ public class Application {
 	public void manageEmployeesMenu(InputHandler input, MenuPrinter menu) throws IOException {
 		EmployeeManager manager = new EmployeeManager(dataStore);
 		boolean wantToExit = false;
-		boolean success = false;
 		while (!wantToExit) {
 			menu.printAdministrateEmployeesMenu();
 			// Return 0 if empty choice
@@ -92,10 +85,10 @@ public class Application {
 				manager.showEmployees(menu);
 				break;
 			case '2':
-				success = manager.createEmployee(input, menu);
+				manager.createEmployee(input, menu);
 				break;
 			case '3':
-				success = manager.deleteEmployee(input, menu);
+				manager.deleteEmployee(input, menu);
 				break;
 			case '4':
 				wantToExit = true;

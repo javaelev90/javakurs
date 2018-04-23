@@ -136,6 +136,7 @@ public class BookingManager {
 	}
 
 	private Employee getEmployeeWithFewestBookingsOnDate(TimeSlot date, List<Employee> employees) {
+		// Should not use MAX INTEGER value
 		int leastNumberOfBookings = Integer.MAX_VALUE;
 		if (!employees.isEmpty()) {
 			Employee employeeWithFewestBookings = employees.get(0);
