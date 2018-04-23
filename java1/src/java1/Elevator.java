@@ -57,7 +57,7 @@ public class Elevator implements Runnable{
 		
 		case MOVINGUP:
 			//Stop at levels where a person wants to get off and pick up people who want to go up, continue to highest call
-			//then switch to moving down if queue is not emptu
+			//then switch to moving down if queue is not empty
 			int nextLevel = currentLevel;
 			for(Person person : peopleInElevator) {
 				Optional<Integer> destination = person.getdestinationLevel();
