@@ -42,7 +42,7 @@ public class WorkDay {
 		StringBuilder builder = new StringBuilder();
 		builder.append("-").append(date.toString()).append(" working: ").append("(" + workingLimits.toString() + ")")
 				.append("\n");
-		bookings.forEach(booking -> builder.append("--").append(booking.getBookingTime().toString()).append("\n"));
+		bookings.forEach(booking -> builder.append("--").append(booking.toString()).append("\n"));
 		return builder.toString();
 	}
 }
