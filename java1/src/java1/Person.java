@@ -2,38 +2,38 @@ package java1;
 
 import java.util.Random;
 
-public class Person implements Runnable{
+public class Person extends Thread{
 	
 	private boolean inElevator;
-//	private boolean chosenDestination;
-	private int destinationLevel;
 	private int originLevel;
+	private int destinationLevel;
 	private String name;
-	private boolean reachedDestination;
 	
-	public Person(String name, int originLevel, int destinationLevel) {
+	public Person(String name, int originLevel) {
 		inElevator = false;
 		this.originLevel = originLevel;
-		this.destinationLevel = destinationLevel;
-		reachedDestination = false;
 		this.name = name;
 	}
-
 	
 	public int getOriginLevel() {
 		return originLevel;
 	}
 	
-	public void elevatorDoorsOpening(Elevator elevator) {
+	public void elevatorDoorsOpening(Elevator elevator) throws InterruptedException {
 		if(!inElevator) {
-			System.out.println(name+" is entering elevator");
-			elevator.enterElevator(this);
-			inElevator = true;
+			if(elevator.enterElevator(this)) {
+				System.out.println("-"+name+" entered the elevator");
+				inElevator = true;
+			} else {
+				System.out.println("-"+name+" could not enter the elevator");
+			}		
 		} else {
-			System.out.println(name+" is leaving elevator");
-			elevator.leaveElevator(this);
-			reachedDestination = true;
-			inElevator = false;
+			if(elevator.leaveElevator(this)) {
+				System.out.println("-"+name+" left the elevator");
+				inElevator = false;
+			} else {
+				System.out.println("-"+name+" could not leave the elevator");
+			}
 		}	
 	}
 	
@@ -41,33 +41,16 @@ public class Person implements Runnable{
 		return destinationLevel;
 	}
 	
-	public String getName() {
+	public String getPersonName() {
 		return name;
 	}
 	
-//	public int chooseDestination(int[] listOfLevels) {
-//		destinationLevel = new Random().nextInt(listOfLevels.length);
-//		chosenDestination = true;
-//		return destinationLevel;
-//	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		while(!reachedDestination) {
-
-			//System.out.println(name+" is waiting "+(inElevator ? "in the elevator" : "on the elevator"));
-			
-		}
-		
-		//System.out.println("Reached destination:"+toString());
+	public int chooseDestination(int[] listOfLevels) {
+		destinationLevel = new Random().nextInt(listOfLevels.length);
+		return listOfLevels[destinationLevel];
 	}
-	
+
 	public String toString() {
-		return "\nName: "+name
-				+"\nOrigin: "+originLevel
-				+"\nDestination: "+destinationLevel
-				+"\n";
-				
+		return name;		
 	}
 }

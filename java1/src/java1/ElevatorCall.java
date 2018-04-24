@@ -21,5 +21,9 @@ public class ElevatorCall {
 	public Person getPerson() {
 		return person;
 	}
-		
+	
+	public String toString() {
+		return ""+personLevel;
+	}
+	
 }

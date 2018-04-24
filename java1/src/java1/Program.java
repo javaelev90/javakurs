@@ -2,40 +2,42 @@ package java1;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Program {
 
 	public static void main(String[] args) throws InterruptedException {
 
-		Elevator elevator = new Elevator(0);
+		Elevator elevator = new Elevator(5);
 		
 		Thread thread = new Thread(elevator);
 		thread.start();
-		//Thread.sleep(1000);
-		//							NAMN	   ORIGIN	DESTINATION
-		Person person = new Person("Pelle"		,2			,4);
-		Person person2 = new Person("Ingvar"	,1			,3);
-		Person person3 = new Person("Lisa"		,3			,0);
-		Person person4 = new Person("Ann"		,6			,3);
+
+		//							NAMN	   ORIGIN	
+		Person person = new Person("Pelle"		,2);
+		Person person2 = new Person("Ingvar"	,1);
+		Person person3 = new Person("Lisa"		,3);
+		Person person4 = new Person("Ann"		,6);
+		Person person5 = new Person("Gunn"		,3);
 		
-		Thread thread2 = new Thread(person);
-		Thread thread3 = new Thread(person2);
-		Thread thread4 = new Thread(person3);
-		Thread thread5 = new Thread(person4);
-		
-		thread2.start();
-		thread3.start();
-		thread4.start();
-		thread5.start();
+		person.start();
+		person2.start();
+		person3.start();
+		person4.start();
+		person5.start();
 		
 		List<Person>  people = new ArrayList<Person>();
 		people.add(person);
 		people.add(person2);
 		people.add(person3);
 		people.add(person4);
+		people.add(person5);
 		
+		int minimum = 100;
 		for(Person p : people) {
-			//Thread.sleep(1);
+			
+			int sleepTime = minimum + new Random().nextInt(800);
+			Thread.sleep(sleepTime);
 			
 			elevator.clickCallButton(new ElevatorCall(p, p.getOriginLevel()));
 		}
