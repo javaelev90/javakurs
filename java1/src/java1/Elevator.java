@@ -47,81 +47,96 @@ public class Elevator implements Runnable{
 		areDoorsOpen = new AtomicBoolean();
 		while(true) {
 			try {
-				synchronized(queue) {
-					synchronized(peopleInElevator) {
-						int waitingCycles = 0;
-						while(queue.isEmpty() && peopleInElevator.isEmpty()) {
-							System.out.println("Waiting for people..");
-							queue.wait(1000);
-							waitingCycles++;
-							if(waitingCycles > MAX_WAITING_CYCLES) {
-								break;
-							}
-						}
-						if(waitingCycles > MAX_WAITING_CYCLES) {
-							break;
-						}
-					}
+				//waits for people to call elevator
+				int waitingCycles = waitOnElevatorCallEvents();
+				if(waitingCycles > MAX_WAITING_CYCLES) {
+					break;
 				}
+				System.out.println("---------------<--Elevator status-->-----------------");
+				System.out.println("Current Level:" + currentLevel);
+				System.out.println("People in elevator: "+ peopleInElevator.toString());
+				System.out.println("Elevator destinations: "+ destinations.toString());
 				
-				System.out.println("-Current Level:" + currentLevel);
-				System.out.println("--People in elevator: "+ peopleInElevator.toString());
-				System.out.println("--Elevator destinations: "+ destinations.toString());
-	
 				//Checks if there are people that want to get off/on on the current level
 				if(shouldOpenDoors()) {
 
-					System.out.println("Opening doors..");
-					areDoorsOpen.set(true);
-
-					Thread.sleep(100); //Opening time
-					
-					//Notifies people that want to get off or on the elevator on the current level
-					notifyPeopleOnCurrentLevel();
-					
-					areDoorsOpen.set(false);
-					System.out.println("Closing doors..");
-					Thread.sleep(100); //Closing time
-					
-					synchronized(destinations) {
-						destinations.remove(new Integer(currentLevel));
-					}
+					openDoorEvent();
 				}
+				System.out.println("-----------------------------------------------------");
 				//Updates which way to move
 				updateElevatorState();
 				
-				switch(currentState) {
-				case MOVING_UP:
-					System.out.println("Moving up..");
-					incrementElevatorLevel();
-					break;
-				case MOVING_DOWN:
-					System.out.println("Moving down..");
-					decrementElevatorLevel();
-					break;
-				case NOT_MOVING:
-					System.out.println("Not moving..");
-					break;
-				}
+				moveElevator();
+				
 				Thread.sleep(300);
 				
 			} catch (InterruptedException e) {
 				System.out.println("An InterruptedException was thrown");
-			} catch (Exception e) {
-				System.out.println("An Exception was thrown");
-			}
-					
+			}			
 		}	
-		System.out.println("Elevator exceeded waiting limit and will turn off");
+		System.out.println("Elevator exceeded waiting limit and will turn off");		
+	}
+	
+	private int waitOnElevatorCallEvents() throws InterruptedException {
+		int waitingCycles = 0;
+		synchronized(queue) {
+			synchronized(peopleInElevator) {
+				
+				while(queue.isEmpty() && peopleInElevator.isEmpty()) {
+					System.out.println("Elevator is waiting for people..");
+					queue.wait(1000);
+					waitingCycles++;
+					if(waitingCycles > MAX_WAITING_CYCLES) {
+						break;
+					}
+				}
+				
+			}
+		}
+		return waitingCycles;
+	}
+	
+	private void openDoorEvent() throws InterruptedException {
+		System.out.println("-----------------<--Level Event-->-------------------");
+		System.out.println("<-||->Opening doors..");
+		areDoorsOpen.set(true);
+
+		Thread.sleep(100); //Opening time
 		
+		//Notifies people that want to get off or on the elevator on the current level
+		notifyPeopleOnCurrentLevel();
+		
+		areDoorsOpen.set(false);
+		System.out.println("|-><-|Closing doors..");
+		Thread.sleep(100); //Closing time
+		
+		synchronized(destinations) {
+			destinations.remove(new Integer(currentLevel));
+		}
+	}
+	
+	private void moveElevator() {
+		switch(currentState) {
+		case MOVING_UP:
+			System.out.println("\n Elevator moving up..\n");
+			incrementElevatorLevel();
+			break;
+		case MOVING_DOWN:
+			System.out.println("\n Elevator moving down..\n");
+			decrementElevatorLevel();
+			break;
+		case NOT_MOVING:
+			System.out.println("\n Elevator not moving..\n");
+			break;
+		}
 	}
 	
 	public boolean enterElevator(Person person) {
 		synchronized(peopleInElevator) {
 			if(areDoorsOpen.get()) {
-				peopleInElevator.add(person);
 				int destination = person.chooseDestination(elevatorLevels);
 				clickOnDestination(destination);
+				peopleInElevator.add(person);
 				System.out.println("-"+person.getPersonName() + " wants to go to level " + destination);
 				return true;
 			}	
@@ -139,10 +154,8 @@ public class Elevator implements Runnable{
 				clickOnDestination(destination);
 				System.out.println("-"+person.getPersonName() + " wants to go to level " + destination);
 				return false;
-			}
-			
-		}
-		
+			}	
+		}	
 	}
 	
 	private void clickOnDestination(int destination) {
@@ -172,8 +185,7 @@ public class Elevator implements Runnable{
 		}
 		for(Person person : peopleWhoLeftElevator) {
 			person.elevatorDoorsOpening(this);
-		}
-		
+		}		
 	}
 	
 	private void incrementElevatorLevel() {
@@ -271,6 +283,4 @@ public class Elevator implements Runnable{
 			}
 		}
 	}
-
-
 }

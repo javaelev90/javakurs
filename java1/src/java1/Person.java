@@ -29,7 +29,7 @@ public class Person extends Thread{
 			}		
 		} else {
 			if(elevator.leaveElevator(this)) {
-				System.out.println("-"+name+" left the elevator");
+				System.out.format("-%s left the elevator(origin: %d, destination: %d)%n", name, originLevel, destinationLevel);
 				inElevator = false;
 			} else {
 				System.out.println("-"+name+" could not leave the elevator");
@@ -53,4 +53,6 @@ public class Person extends Thread{
 	public String toString() {
 		return name;		
 	}
+
+	
 }

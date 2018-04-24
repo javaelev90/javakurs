@@ -7,27 +7,27 @@ import java.util.Random;
 public class Program {
 
 	public static void main(String[] args) throws InterruptedException {
-
-		Elevator elevator = new Elevator(5);
+		Elevator elevator = new Elevator();
 		
 		Thread thread = new Thread(elevator);
 		thread.start();
-
+		
+		
 		//							NAMN	   ORIGIN	
-		Person person = new Person("Pelle"		,2);
+		Person person1 = new Person("Pelle"		,2);
 		Person person2 = new Person("Ingvar"	,1);
 		Person person3 = new Person("Lisa"		,3);
 		Person person4 = new Person("Ann"		,6);
 		Person person5 = new Person("Gunn"		,3);
 		
-		person.start();
+		person1.start();
 		person2.start();
 		person3.start();
 		person4.start();
 		person5.start();
 		
 		List<Person>  people = new ArrayList<Person>();
-		people.add(person);
+		people.add(person1);
 		people.add(person2);
 		people.add(person3);
 		people.add(person4);
