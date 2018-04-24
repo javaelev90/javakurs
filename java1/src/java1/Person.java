@@ -2,7 +2,7 @@ package java1;
 
 import java.util.Random;
 
-public class Person extends Thread{
+public class Person extends Thread implements ElevatorDoorsListener{
 	
 	private boolean inElevator;
 	private int originLevel;
@@ -17,24 +17,6 @@ public class Person extends Thread{
 	
 	public int getOriginLevel() {
 		return originLevel;
-	}
-	
-	public void elevatorDoorsOpening(Elevator elevator) throws InterruptedException {
-		if(!inElevator) {
-			if(elevator.enterElevator(this)) {
-				System.out.println("-"+name+" entered the elevator");
-				inElevator = true;
-			} else {
-				System.out.println("-"+name+" could not enter the elevator");
-			}		
-		} else {
-			if(elevator.leaveElevator(this)) {
-				System.out.format("-%s left the elevator(origin: %d, destination: %d)%n", name, originLevel, destinationLevel);
-				inElevator = false;
-			} else {
-				System.out.println("-"+name+" could not leave the elevator");
-			}
-		}	
 	}
 	
 	public int getDestinationLevel() {
@@ -52,6 +34,34 @@ public class Person extends Thread{
 
 	public String toString() {
 		return name;		
+	}
+
+	@Override
+	public void onElevatorDoorsEvent(Elevator elevator) {
+		if(!inElevator) {
+			if(elevator.getCurrentLevel() == originLevel) {
+				if(elevator.enterElevator()) {
+					System.out.println("-"+name+" entered the elevator");
+					chooseDestination(elevator.getElevatorLevels());
+					elevator.clickOnDestination(destinationLevel);
+					System.out.println("-"+name + " wants to go to level " + destinationLevel);
+					inElevator = true;
+				} else {
+					System.out.println("-"+name+" could not enter the elevator");
+				}
+			}				
+		} else {
+			if(elevator.getCurrentLevel() == destinationLevel) {
+				if(elevator.leaveElevator()) {
+					System.out.format("-%s left the elevator(origin: %d, destination: %d)%n", name, originLevel, destinationLevel);
+					inElevator = false;
+				} else {
+					System.out.println("-"+name+" could not leave the elevator");
+					elevator.clickOnDestination(destinationLevel);
+					System.out.println("-"+name + " wants to go to level " + destinationLevel);
+				}
+			}
+		}
 	}
 
 	

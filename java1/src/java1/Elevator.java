@@ -13,10 +13,9 @@ public class Elevator implements Runnable{
 	private static enum ElevatorState {NOT_MOVING, MOVING_UP, MOVING_DOWN };
 	private static final int MAX_WAITING_CYCLES = 2;
 	
-	private static int[] elevatorLevels = {0,1,2,3,4,5,6};
+	private static final int[] elevatorLevels = {0,1,2,3,4,5,6};
 	private int currentLevel;
 	private ElevatorState currentState;
-	private List<Person> peopleInElevator;
 	private List<ElevatorCall> queue;
 	private AtomicBoolean areDoorsOpen;
 	private Set<Integer> destinations;
@@ -43,7 +42,6 @@ public class Elevator implements Runnable{
 	@Override
 	public void run() {
 		queue = new ArrayList<ElevatorCall>();
-		peopleInElevator = new ArrayList<Person>();
 		areDoorsOpen = new AtomicBoolean();
 		while(true) {
 			try {
@@ -54,7 +52,6 @@ public class Elevator implements Runnable{
 				}
 				System.out.println("---------------<--Elevator status-->-----------------");
 				System.out.println("Current Level:" + currentLevel);
-				System.out.println("People in elevator: "+ peopleInElevator.toString());
 				System.out.println("Elevator destinations: "+ destinations.toString());
 				
 				//Checks if there are people that want to get off/on on the current level
@@ -79,20 +76,21 @@ public class Elevator implements Runnable{
 	
 	private int waitOnElevatorCallEvents() throws InterruptedException {
 		int waitingCycles = 0;
-		synchronized(queue) {
-			synchronized(peopleInElevator) {
+	
 				
-				while(queue.isEmpty() && peopleInElevator.isEmpty()) {
-					System.out.println("Elevator is waiting for people..");
-					queue.wait(1000);
-					waitingCycles++;
-					if(waitingCycles > MAX_WAITING_CYCLES) {
-						break;
-					}
-				}
-				
+		while(destinations.isEmpty()) {
+			System.out.println("Elevator is waiting for people..");
+			synchronized(queue) {
+				queue.wait(1000);
+			}
+			
+			waitingCycles++;
+			if(waitingCycles > MAX_WAITING_CYCLES) {
+				break;
 			}
 		}
+				
+
 		return waitingCycles;
 	}
 	
@@ -104,7 +102,7 @@ public class Elevator implements Runnable{
 		Thread.sleep(100); //Opening time
 		
 		//Notifies people that want to get off or on the elevator on the current level
-		notifyPeopleOnCurrentLevel();
+		notifyListeners();
 		
 		areDoorsOpen.set(false);
 		System.out.println("|-><-|Closing doors..");
@@ -131,61 +129,31 @@ public class Elevator implements Runnable{
 		}
 	}
 	
-	public boolean enterElevator(Person person) {
-		synchronized(peopleInElevator) {
-			if(areDoorsOpen.get()) {
-				int destination = person.chooseDestination(elevatorLevels);
-				clickOnDestination(destination);
-				peopleInElevator.add(person);
-				System.out.println("-"+person.getPersonName() + " wants to go to level " + destination);
-				return true;
-			}	
-			return false;
-		}
+	public int[] getElevatorLevels() {
+		return elevatorLevels;
 	}
 	
-	public boolean leaveElevator(Person person) {
-		synchronized(peopleInElevator) {
-			if(areDoorsOpen.get()) {
-				peopleInElevator.remove(person);
-				return true;
-			} else {
-				int destination = person.getDestinationLevel();
-				clickOnDestination(destination);
-				System.out.println("-"+person.getPersonName() + " wants to go to level " + destination);
-				return false;
-			}	
-		}	
+	public boolean enterElevator() {
+		return areDoorsOpen.get();
 	}
 	
-	private void clickOnDestination(int destination) {
+	public boolean leaveElevator() {
+		return areDoorsOpen.get();
+	}
+	
+	public void clickOnDestination(int destination) {
 		synchronized(destinations) {
 			destinations.add(destination);
 		}
 	}
 	
-	private void notifyPeopleOnCurrentLevel() throws InterruptedException {
+	private void notifyListeners() throws InterruptedException {
 		synchronized(queue) {
-			List<ElevatorCall> pickedUpPeople = new ArrayList<ElevatorCall>();
 			for(ElevatorCall call : queue) {
-				if(call.getPersonLevel() == currentLevel) {
-					pickedUpPeople.add(call);
-					call.getPerson().elevatorDoorsOpening(this);
-				}
-			}
-			queue.removeAll(pickedUpPeople);
-		}
-		List<Person> peopleWhoLeftElevator = new ArrayList<Person>();
-		synchronized(peopleInElevator) {	
-			for(Person person : peopleInElevator) {
-				if(person.getDestinationLevel() == currentLevel) {
-					peopleWhoLeftElevator.add(person);
-				}
+				call.getListener().onElevatorDoorsEvent(this);
+	
 			}
 		}
-		for(Person person : peopleWhoLeftElevator) {
-			person.elevatorDoorsOpening(this);
-		}		
 	}
 	
 	private void incrementElevatorLevel() {
@@ -253,32 +221,26 @@ public class Elevator implements Runnable{
 	private boolean shouldOpenDoors() {
 		boolean openDoors = false;
 		
-		synchronized(queue){
-			for(ElevatorCall call : queue) {
-				int personLevel = call.getPersonLevel();
-				if(personLevel == currentLevel) {
-					openDoors = true;
-				} 
-			}
-		}
-		synchronized(peopleInElevator) {
-			for(Person person : peopleInElevator) {
-				int destination = person.getDestinationLevel();
-
+		synchronized(destinations) {
+			for(Integer destination : destinations) {
 				if(destination == currentLevel) {
 					openDoors = true;
-				} 
+				}
 			}
 		}
 		
 		return openDoors;
 	}
 	
+	public int getCurrentLevel() {
+		return currentLevel;
+	}
+	
 	public void clickCallButton(ElevatorCall call) throws InterruptedException {
 		synchronized(queue) {
 			synchronized(destinations) {
 				queue.add(call);
-				destinations.add(call.getPersonLevel());
+				destinations.add(call.getOriginLevel());
 				queue.notify();
 			}
 		}

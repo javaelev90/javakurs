@@ -2,28 +2,24 @@ package java1;
 
 public class ElevatorCall {
 
-	private Person person;
-	private int personLevel;
+	private ElevatorDoorsListener listener;
+	private int originLevel;
 	
-	public ElevatorCall(Person person, int personLevel) {
-		this.person = person;
-		this.personLevel = personLevel;
+	public ElevatorCall(ElevatorDoorsListener listener, int personLevel) {
+		this.listener = listener;
+		this.originLevel = personLevel;
 	}
 
-	public int getPersonLevel() {
-		return personLevel;
-	}
-
-	public void setPersonLevel(int personLevel) {
-		this.personLevel = personLevel;
-	}
-
-	public Person getPerson() {
-		return person;
+	public ElevatorDoorsListener getListener() {
+		return listener;
 	}
 	
+	public int getOriginLevel() {
+		return originLevel;
+	}
+
 	public String toString() {
-		return ""+personLevel;
+		return ""+originLevel;
 	}
 	
 }
