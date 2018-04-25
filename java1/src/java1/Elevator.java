@@ -29,7 +29,7 @@ public class Elevator implements Runnable{
 		currentState = ElevatorState.NOT_MOVING;
 		destinations = new HashSet<Integer>();
 		this.floors = new HashMap<Integer, Floor>();
-		IntStream.range(elevatorLevels[0], elevatorLevels.length).boxed().forEach(i -> floors.put(i, new Floor(this,i)));
+		IntStream.range(elevatorLevels[0], elevatorLevels.length).forEach(i -> floors.put(i, new Floor(this,i)));
 	}
 	
 	public Elevator(int startingLevel) {
@@ -44,7 +44,7 @@ public class Elevator implements Runnable{
 		currentState = ElevatorState.NOT_MOVING;
 		destinations = new HashSet<Integer>();
 		this.floors = new HashMap<Integer, Floor>();
-		IntStream.range(elevatorLevels[0], elevatorLevels.length).boxed().forEach(i -> floors.put(i, new Floor(this,i)));
+		IntStream.range(elevatorLevels[0], elevatorLevels.length).forEach(i -> floors.put(i, new Floor(this,i)));
 	}
 
 	@Override
@@ -182,7 +182,10 @@ public class Elevator implements Runnable{
 	
 	private void callDoorListeners() throws InterruptedException {
 
-		floors.get(currentLevel).notifyAll();
+		Floor floor = floors.get(currentLevel);
+		synchronized(floor) {
+			floor.notifyAll();
+		}
 		
 	}
 	

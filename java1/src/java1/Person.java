@@ -70,33 +70,35 @@ public class Person implements Runnable{
 		// TODO Auto-generated method stub
 		while(!reachedDestination) {
 			if(!inElevator) {
-				synchronized(originFloor) {
-					try {
+				try {
+					synchronized(originFloor) {
 						originFloor.wait();
+					
 						Elevator elevator = originFloor.getElevator();
-						synchronized(elevator) {
-							if(elevator.enterElevator()) {
-								System.out.println("-"+name+" entered the elevator");
-								int destination = chooseDestination(elevator.getElevatorLevels());
-								
-								destinationFloor = elevator.clickOnElevatorDestinationPanel(destination);
-								
-								System.out.println("-"+name + " wants to go to level " + destination);
-								inElevator = true;
-							} else {
-								System.out.println("-"+name+" could not enter the elevator");
-							}
+	
+						if(elevator.enterElevator()) {
+							System.out.println("-"+name+" entered the elevator");
+							int destination = chooseDestination(elevator.getElevatorLevels());
+							
+							destinationFloor = elevator.clickOnElevatorDestinationPanel(destination);
+							
+							System.out.println("-"+name + " wants to go to level " + destination);
+							inElevator = true;
+						} else {
+							System.out.println("-"+name+" could not enter the elevator");
 						}
-						
-					} catch (InterruptedException e) {
-						System.out.println("InterruptedException was caught when waiting on origin floor: "+originFloor);
 					}
-				}	
+					
+				} catch (InterruptedException e) {
+					System.out.println("InterruptedException was caught when waiting on origin floor: "+originFloor);
+				}
+			
 			} else {
 				try {
-					destinationFloor.wait();
-					Elevator elevator = originFloor.getElevator();
-					synchronized(elevator) {
+					synchronized(destinationFloor) {
+						destinationFloor.wait();
+					
+						Elevator elevator = destinationFloor.getElevator();
 						if(elevator.leaveElevator()) {
 							System.out.format("-%s left the elevator(origin: %d, destination: %d)%n",
 									name, originFloor.getFloorLevel(), destinationFloor.getFloorLevel());
@@ -107,11 +109,9 @@ public class Person implements Runnable{
 							
 							elevator.clickOnElevatorDestinationPanel(destinationFloor.getFloorLevel());
 							System.out.println("-"+name + " wants to go to level " + destinationFloor.getFloorLevel());
-							
 						}
 					}
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					System.out.println("InterruptedException was caught when waiting on destination floor: "+destinationFloor);
 				}
 			}
