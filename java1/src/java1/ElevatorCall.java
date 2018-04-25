@@ -19,7 +19,7 @@ public class ElevatorCall {
 	}
 
 	public String toString() {
-		return ""+originLevel;
+		return listener.toString();
 	}
 	
 }

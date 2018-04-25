@@ -34,12 +34,10 @@ public class Program {
 		people.add(person5);
 		
 		int minimum = 100;
-		for(Person p : people) {
-			
+		for(Person person : people) {	
 			int sleepTime = minimum + new Random().nextInt(800);
 			Thread.sleep(sleepTime);
-			
-			elevator.clickCallButton(new ElevatorCall(p, p.getOriginLevel()));
+			elevator.clickElevatorCallButton(new ElevatorCall(person, person.getOriginLevel()));
 		}
 	}
 

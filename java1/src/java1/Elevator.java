@@ -21,7 +21,7 @@ public class Elevator implements Runnable{
 	private Set<Integer> destinations;
 	
 	public Elevator() {
-		currentLevel = new Random().nextInt(elevatorLevels.length);
+		currentLevel = elevatorLevels[new Random().nextInt(elevatorLevels.length)];
 		currentState = ElevatorState.NOT_MOVING;
 		destinations = new HashSet<Integer>();
 	}
@@ -52,14 +52,17 @@ public class Elevator implements Runnable{
 				}
 				System.out.println("---------------<--Elevator status-->-----------------");
 				System.out.println("Current Level:" + currentLevel);
-				System.out.println("Elevator destinations: "+ destinations.toString());
+				synchronized(destinations) {
+					System.out.println("Elevator destinations: "+ destinations.toString());
+				}
 				
 				//Checks if there are people that want to get off/on on the current level
-				if(shouldOpenDoors()) {
-
+				while (shouldOpenDoors()){
 					openDoorEvent();
-				}
+				} 
 				System.out.println("-----------------------------------------------------");
+				
+				
 				//Updates which way to move
 				updateElevatorState();
 				
@@ -89,12 +92,13 @@ public class Elevator implements Runnable{
 				break;
 			}
 		}
-				
-
 		return waitingCycles;
 	}
 	
 	private void openDoorEvent() throws InterruptedException {
+		synchronized(destinations) {
+			destinations.remove(new Integer(currentLevel));
+		}
 		System.out.println("-----------------<--Level Event-->-------------------");
 		System.out.println("<-||->Opening doors..");
 		areDoorsOpen.set(true);
@@ -102,18 +106,15 @@ public class Elevator implements Runnable{
 		Thread.sleep(100); //Opening time
 		
 		//Notifies people that want to get off or on the elevator on the current level
-		notifyListeners();
+		callDoorListeners();
 		
 		areDoorsOpen.set(false);
 		System.out.println("|-><-|Closing doors..");
 		Thread.sleep(100); //Closing time
-		
-		synchronized(destinations) {
-			destinations.remove(new Integer(currentLevel));
-		}
 	}
 	
 	private void moveElevator() {
+		
 		switch(currentState) {
 		case MOVING_UP:
 			System.out.println("\n Elevator moving up..\n");
@@ -127,8 +128,10 @@ public class Elevator implements Runnable{
 			System.out.println("\n Elevator not moving..\n");
 			break;
 		}
+		
 	}
 	
+	// !--------------PUBLIC FUNCTIONALITY START------------------!
 	public int[] getElevatorLevels() {
 		return elevatorLevels;
 	}
@@ -141,17 +144,32 @@ public class Elevator implements Runnable{
 		return areDoorsOpen.get();
 	}
 	
-	public void clickOnDestination(int destination) {
+	public void clickOnElevatorDestinationPanel(int destination) {
 		synchronized(destinations) {
 			destinations.add(destination);
 		}
 	}
 	
-	private void notifyListeners() throws InterruptedException {
+	public void clickElevatorCallButton(ElevatorCall call) throws InterruptedException {
+		synchronized(queue) {
+			synchronized(destinations) {
+				queue.add(call);
+				destinations.add(call.getOriginLevel());
+				queue.notify();
+			}
+		}
+		System.out.println(call.toString()+" called elevator on level " +call.getOriginLevel());
+	}
+	
+	public int getCurrentLevel() {
+		return currentLevel;
+	}
+	// !---------------PUBLIC FUNCTIONALITY END--------------------!
+	
+	private void callDoorListeners() throws InterruptedException {
 		synchronized(queue) {
 			for(ElevatorCall call : queue) {
 				call.getListener().onElevatorDoorsEvent(this);
-	
 			}
 		}
 	}
@@ -232,17 +250,6 @@ public class Elevator implements Runnable{
 		return openDoors;
 	}
 	
-	public int getCurrentLevel() {
-		return currentLevel;
-	}
 	
-	public void clickCallButton(ElevatorCall call) throws InterruptedException {
-		synchronized(queue) {
-			synchronized(destinations) {
-				queue.add(call);
-				destinations.add(call.getOriginLevel());
-				queue.notify();
-			}
-		}
-	}
+	
 }
