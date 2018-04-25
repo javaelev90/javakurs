@@ -1,11 +1,14 @@
 package java1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
 
 public class Elevator implements Runnable{
@@ -19,11 +22,14 @@ public class Elevator implements Runnable{
 	private List<ElevatorCall> queue;
 	private AtomicBoolean areDoorsOpen;
 	private Set<Integer> destinations;
+	private Map<Integer, Floor> floors;
 	
 	public Elevator() {
 		currentLevel = elevatorLevels[new Random().nextInt(elevatorLevels.length)];
 		currentState = ElevatorState.NOT_MOVING;
 		destinations = new HashSet<Integer>();
+		this.floors = new HashMap<Integer, Floor>();
+		IntStream.range(elevatorLevels[0], elevatorLevels.length).boxed().forEach(i -> floors.put(i, new Floor(this,i)));
 	}
 	
 	public Elevator(int startingLevel) {
@@ -37,6 +43,8 @@ public class Elevator implements Runnable{
 		currentLevel = startingLevel;
 		currentState = ElevatorState.NOT_MOVING;
 		destinations = new HashSet<Integer>();
+		this.floors = new HashMap<Integer, Floor>();
+		IntStream.range(elevatorLevels[0], elevatorLevels.length).boxed().forEach(i -> floors.put(i, new Floor(this,i)));
 	}
 
 	@Override
@@ -80,16 +88,15 @@ public class Elevator implements Runnable{
 	private int waitOnElevatorCallEvents() throws InterruptedException {
 		int waitingCycles = 0;
 	
-				
-		while(destinations.isEmpty()) {
-			System.out.println("Elevator is waiting for people..");
-			synchronized(queue) {
-				queue.wait(1000);
-			}
-			
-			waitingCycles++;
-			if(waitingCycles > MAX_WAITING_CYCLES) {
-				break;
+		synchronized(destinations) {		
+			while(destinations.isEmpty()) {
+				System.out.println("Elevator is waiting for people..");
+				destinations.wait(1000);
+	
+				waitingCycles++;
+				if(waitingCycles > MAX_WAITING_CYCLES) {
+					break;
+				}
 			}
 		}
 		return waitingCycles;
@@ -132,6 +139,12 @@ public class Elevator implements Runnable{
 	}
 	
 	// !--------------PUBLIC FUNCTIONALITY START------------------!
+	public Floor getElevatorFloor(int i) {
+		synchronized(floors) {
+			return floors.get(i);
+		}
+	}
+	
 	public int[] getElevatorLevels() {
 		return elevatorLevels;
 	}
@@ -144,21 +157,22 @@ public class Elevator implements Runnable{
 		return areDoorsOpen.get();
 	}
 	
-	public void clickOnElevatorDestinationPanel(int destination) {
+	public Floor clickOnElevatorDestinationPanel(int destination) {
 		synchronized(destinations) {
 			destinations.add(destination);
 		}
+		
+		return floors.get(destination);
+		
 	}
 	
-	public void clickElevatorCallButton(ElevatorCall call) throws InterruptedException {
-		synchronized(queue) {
-			synchronized(destinations) {
-				queue.add(call);
-				destinations.add(call.getOriginLevel());
-				queue.notify();
-			}
+	public void clickElevatorCallButton(int destination) throws InterruptedException {
+
+		synchronized(destinations) {
+			destinations.add(destination);
+			destinations.notify();
 		}
-		System.out.println(call.toString()+" called elevator on level " +call.getOriginLevel());
+		
 	}
 	
 	public int getCurrentLevel() {
@@ -167,11 +181,9 @@ public class Elevator implements Runnable{
 	// !---------------PUBLIC FUNCTIONALITY END--------------------!
 	
 	private void callDoorListeners() throws InterruptedException {
-		synchronized(queue) {
-			for(ElevatorCall call : queue) {
-				call.getListener().onElevatorDoorsEvent(this);
-			}
-		}
+
+		floors.get(currentLevel).notifyAll();
+		
 	}
 	
 	private void incrementElevatorLevel() {
