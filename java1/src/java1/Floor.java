@@ -16,7 +16,5 @@ public class Floor {
 	
 	public Elevator getElevator() {
 		return elevator;
-	}
-	
-	
+	}	
 }

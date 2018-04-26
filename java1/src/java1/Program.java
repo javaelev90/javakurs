@@ -12,26 +12,23 @@ public class Program {
 	public static void main(String[] args) throws InterruptedException {
 		
 		Elevator elevator = new Elevator();
-			
 		
 		Thread thread = new Thread(elevator);
 		thread.start();
 		
 		
-		//							NAMN	   ORIGIN	
-		Person person1 = new Person("Pelle"		,elevator.getElevatorFloor(2));
-		Person person2 = new Person("Ingvar"	,elevator.getElevatorFloor(1));
-		Person person3 = new Person("Lisa"		,elevator.getElevatorFloor(3));
-		Person person4 = new Person("Ann"		,elevator.getElevatorFloor(6));
-		Person person5 = new Person("Gunn"		,elevator.getElevatorFloor(3));
+		//							NAMN	   ORIGIN FLOOR	
+//		Person person1 = new Person("Pelle"		,elevator.getElevatorFloor(2));
+//		Person person2 = new Person("Ingvar"	,elevator.getElevatorFloor(1));
+//		Person person3 = new Person("Lisa"		,elevator.getElevatorFloor(3));
+//		Person person4 = new Person("Ann"		,elevator.getElevatorFloor(6));
+//		Person person5 = new Person("Gunn"		,elevator.getElevatorFloor(3));
 		
-		
-		
-		new Thread(person1).start();
-		new Thread(person2).start();
-		new Thread(person3).start();
-		new Thread(person4).start();
-		new Thread(person5).start();
+		Person person1 = new Person("Pelle"		,elevator.getElevatorFloor(new Random().nextInt(elevator.getElevatorLevels().length)));
+		Person person2 = new Person("Ingvar"	,elevator.getElevatorFloor(new Random().nextInt(elevator.getElevatorLevels().length)));
+		Person person3 = new Person("Lisa"		,elevator.getElevatorFloor(new Random().nextInt(elevator.getElevatorLevels().length)));
+		Person person4 = new Person("Ann"		,elevator.getElevatorFloor(new Random().nextInt(elevator.getElevatorLevels().length)));
+		Person person5 = new Person("Gunn"		,elevator.getElevatorFloor(new Random().nextInt(elevator.getElevatorLevels().length)));
 		
 		List<Person>  people = new ArrayList<Person>();
 		people.add(person1);
@@ -44,7 +41,7 @@ public class Program {
 		for(Person person : people) {	
 			int sleepTime = minimum + new Random().nextInt(800);
 			Thread.sleep(sleepTime);
-			elevator.clickElevatorCallButton(person.getOriginFloor().getFloorLevel());
+			new Thread(person).start();				
 		}
 	}
 

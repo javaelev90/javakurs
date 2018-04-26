@@ -10,9 +10,9 @@ public class Person implements Runnable{
 	private String name;
 	private boolean reachedDestination;
 	
-	public Person(String name, Floor floor) {
+	public Person(String name, Floor originFloor) {
 		inElevator = false;
-		originFloor = floor;
+		this.originFloor = originFloor;
 		this.name = name;
 	}
 
@@ -33,61 +33,31 @@ public class Person implements Runnable{
 	public String toString() {
 		return name;
 	}
-	
-//	@Override
-//	public void onElevatorDoorsEvent(Elevator elevator) {
-//		if(!reachedDestination) {
-//			if(!inElevator) {
-//				if(elevator.getCurrentLevel() == originFloor.getFloorLevel()) {
-//					if(elevator.enterElevator()) {
-//						System.out.println("-"+name+" entered the elevator");
-//						int destination = chooseDestination(elevator.getElevatorLevels());
-//						destinationFloor = elevator.clickOnElevatorDestinationPanel(destination);
-//						System.out.println("-"+name + " wants to go to level " + destinationLevel);
-//						inElevator = true;
-//					} else {
-//						System.out.println("-"+name+" could not enter the elevator");
-//					}
-//				}				
-//			} else {
-//				if(elevator.getCurrentLevel() == destinationLevel) {
-//					if(elevator.leaveElevator()) {
-//						System.out.format("-%s left the elevator(origin: %d, destination: %d)%n", name, originLevel, destinationLevel);
-//						inElevator = false;
-//						reachedDestination = true;
-//					} else {
-//						System.out.println("-"+name+" could not leave the elevator");
-//						elevator.clickOnElevatorDestinationPanel(destinationLevel);
-//						System.out.println("-"+name + " wants to go to level " + destinationLevel);
-//					}
-//				}
-//			}
-//		}	
-//	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+	
 		while(!reachedDestination) {
 			if(!inElevator) {
 				try {
+					System.out.println("!! "+name+" called elevator on level "+originFloor.getFloorLevel()+" !!");
+					Elevator elevator = originFloor.getElevator();
+					elevator.clickElevatorCallButton(originFloor.getFloorLevel());
 					synchronized(originFloor) {
 						originFloor.wait();
-					
-						Elevator elevator = originFloor.getElevator();
-	
-						if(elevator.enterElevator()) {
-							System.out.println("-"+name+" entered the elevator");
-							int destination = chooseDestination(elevator.getElevatorLevels());
-							
-							destinationFloor = elevator.clickOnElevatorDestinationPanel(destination);
-							
-							System.out.println("-"+name + " wants to go to level " + destination);
-							inElevator = true;
-						} else {
-							System.out.println("-"+name+" could not enter the elevator");
-						}
 					}
+					if(elevator.enterElevator()) {
+						System.out.println("-"+name+" entered the elevator");
+						int destination = chooseDestination(elevator.getElevatorLevels());
+						
+						destinationFloor = elevator.clickOnElevatorDestinationPanel(destination);
+						
+						System.out.println("-"+name + " wants to go to level " + destination);
+						inElevator = true;
+					} else {
+						System.out.println("-"+name+" could not enter the elevator");
+					}
+					
 					
 				} catch (InterruptedException e) {
 					System.out.println("InterruptedException was caught when waiting on origin floor: "+originFloor);
@@ -97,20 +67,20 @@ public class Person implements Runnable{
 				try {
 					synchronized(destinationFloor) {
 						destinationFloor.wait();
-					
-						Elevator elevator = destinationFloor.getElevator();
-						if(elevator.leaveElevator()) {
-							System.out.format("-%s left the elevator(origin: %d, destination: %d)%n",
-									name, originFloor.getFloorLevel(), destinationFloor.getFloorLevel());
-							inElevator = false;
-							reachedDestination = true;
-						} else {
-							System.out.println("-"+name+" could not leave the elevator");
-							
-							elevator.clickOnElevatorDestinationPanel(destinationFloor.getFloorLevel());
-							System.out.println("-"+name + " wants to go to level " + destinationFloor.getFloorLevel());
-						}
 					}
+					Elevator elevator = destinationFloor.getElevator();
+					if(elevator.leaveElevator()) {
+						System.out.format("-%s left the elevator(origin: %d, destination: %d)%n",
+								name, originFloor.getFloorLevel(), destinationFloor.getFloorLevel());
+						inElevator = false;
+						reachedDestination = true;
+					} else {
+						System.out.println("-"+name+" could not leave the elevator");
+						
+						elevator.clickOnElevatorDestinationPanel(destinationFloor.getFloorLevel());
+						System.out.println("-"+name + " wants to go to level " + destinationFloor.getFloorLevel());
+					}
+					
 				} catch (InterruptedException e) {
 					System.out.println("InterruptedException was caught when waiting on destination floor: "+destinationFloor);
 				}

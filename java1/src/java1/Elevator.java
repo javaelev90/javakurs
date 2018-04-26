@@ -1,9 +1,7 @@
 package java1;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -19,7 +17,6 @@ public class Elevator implements Runnable{
 	private static final int[] elevatorLevels = {0,1,2,3,4,5,6};
 	private int currentLevel;
 	private ElevatorState currentState;
-	private List<ElevatorCall> queue;
 	private AtomicBoolean areDoorsOpen;
 	private Set<Integer> destinations;
 	private Map<Integer, Floor> floors;
@@ -49,8 +46,8 @@ public class Elevator implements Runnable{
 
 	@Override
 	public void run() {
-		queue = new ArrayList<ElevatorCall>();
 		areDoorsOpen = new AtomicBoolean();
+		System.out.println("Elevator is starting on level "+currentLevel);
 		while(true) {
 			try {
 				//waits for people to call elevator
@@ -103,21 +100,19 @@ public class Elevator implements Runnable{
 	}
 	
 	private void openDoorEvent() throws InterruptedException {
-		synchronized(destinations) {
-			destinations.remove(new Integer(currentLevel));
-		}
 		System.out.println("-----------------<--Level Event-->-------------------");
+		
 		System.out.println("<-||->Opening doors..");
-		areDoorsOpen.set(true);
-
 		Thread.sleep(100); //Opening time
+		areDoorsOpen.set(true);
 		
 		//Notifies people that want to get off or on the elevator on the current level
 		callDoorListeners();
+		Thread.sleep(200); //Stays open for this amount of time
 		
-		areDoorsOpen.set(false);
 		System.out.println("|-><-|Closing doors..");
 		Thread.sleep(100); //Closing time
+		areDoorsOpen.set(false);
 	}
 	
 	private void moveElevator() {
@@ -169,8 +164,10 @@ public class Elevator implements Runnable{
 	public void clickElevatorCallButton(int destination) throws InterruptedException {
 
 		synchronized(destinations) {
-			destinations.add(destination);
-			destinations.notify();
+			if(!destinations.contains(destination)) {
+				destinations.add(destination);
+				destinations.notify();
+			}
 		}
 		
 	}
@@ -258,8 +255,10 @@ public class Elevator implements Runnable{
 			for(Integer destination : destinations) {
 				if(destination == currentLevel) {
 					openDoors = true;
+					destinations.remove(destination);
+					break;
 				}
-			}
+			}		
 		}
 		
 		return openDoors;
