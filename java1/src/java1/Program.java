@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.IntStream;
 
 public class Program {
@@ -38,11 +39,21 @@ public class Program {
 		people.add(person5);
 		
 		int minimum = 100;
+		CountDownLatch latch = new CountDownLatch(1);
 		for(Person person : people) {	
-			int sleepTime = minimum + new Random().nextInt(800);
+			int sleepTime = minimum + new Random().nextInt(200);
 			Thread.sleep(sleepTime);
-			new Thread(person).start();				
+			new Thread(()-> {
+				try {
+					latch.await();
+					person.run();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}).start();
 		}
+		latch.countDown();
+		
 	}
 
 }

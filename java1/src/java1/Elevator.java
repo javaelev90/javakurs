@@ -1,5 +1,6 @@
 package java1;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,8 +25,8 @@ public class Elevator implements Runnable{
 	public Elevator() {
 		currentLevel = elevatorLevels[new Random().nextInt(elevatorLevels.length)];
 		currentState = ElevatorState.NOT_MOVING;
-		destinations = new HashSet<Integer>();
-		this.floors = new HashMap<Integer, Floor>();
+		destinations = Collections.synchronizedSet(new HashSet<Integer>());
+		this.floors = Collections.synchronizedMap(new HashMap<Integer, Floor>());
 		IntStream.range(elevatorLevels[0], elevatorLevels.length).forEach(i -> floors.put(i, new Floor(this,i)));
 	}
 	
@@ -39,8 +40,8 @@ public class Elevator implements Runnable{
 		}
 		currentLevel = startingLevel;
 		currentState = ElevatorState.NOT_MOVING;
-		destinations = new HashSet<Integer>();
-		this.floors = new HashMap<Integer, Floor>();
+		destinations = Collections.synchronizedSet(new HashSet<Integer>());
+		this.floors = Collections.synchronizedMap(new HashMap<Integer, Floor>());
 		IntStream.range(elevatorLevels[0], elevatorLevels.length).forEach(i -> floors.put(i, new Floor(this,i)));
 	}
 
@@ -57,9 +58,9 @@ public class Elevator implements Runnable{
 				}
 				System.out.println("---------------<--Elevator status-->-----------------");
 				System.out.println("Current Level:" + currentLevel);
-				synchronized(destinations) {
-					System.out.println("Elevator destinations: "+ destinations.toString());
-				}
+
+				System.out.println("Elevator destinations: "+ destinations.toString());
+				
 				
 				//Checks if there are people that want to get off/on on the current level
 				while (shouldOpenDoors()){
@@ -84,18 +85,18 @@ public class Elevator implements Runnable{
 	
 	private int waitOnElevatorCallEvents() throws InterruptedException {
 		int waitingCycles = 0;
-	
-		synchronized(destinations) {		
-			while(destinations.isEmpty()) {
-				System.out.println("Elevator is waiting for people..");
+
+		while(destinations.isEmpty()) {
+			System.out.println("Elevator is waiting for people..");
+			synchronized(destinations) {
 				destinations.wait(1000);
-	
-				waitingCycles++;
-				if(waitingCycles > MAX_WAITING_CYCLES) {
-					break;
-				}
+			}
+			waitingCycles++;
+			if(waitingCycles > MAX_WAITING_CYCLES) {
+				break;
 			}
 		}
+		
 		return waitingCycles;
 	}
 	
@@ -135,9 +136,9 @@ public class Elevator implements Runnable{
 	
 	// !--------------PUBLIC FUNCTIONALITY START------------------!
 	public Floor getElevatorFloor(int i) {
-		synchronized(floors) {
-			return floors.get(i);
-		}
+
+		return floors.get(i);
+		
 	}
 	
 	public int[] getElevatorLevels() {
@@ -153,9 +154,8 @@ public class Elevator implements Runnable{
 	}
 	
 	public Floor clickOnElevatorDestinationPanel(int destination) {
-		synchronized(destinations) {
-			destinations.add(destination);
-		}
+
+		destinations.add(destination);
 		
 		return floors.get(destination);
 		
@@ -163,11 +163,12 @@ public class Elevator implements Runnable{
 	
 	public void clickElevatorCallButton(int destination) throws InterruptedException {
 
-		synchronized(destinations) {
-			if(!destinations.contains(destination)) {
-				destinations.add(destination);
+		if(!destinations.contains(destination)) {
+			destinations.add(destination);
+			synchronized(destinations){
 				destinations.notify();
 			}
+			
 		}
 		
 	}
@@ -195,46 +196,46 @@ public class Elevator implements Runnable{
 	}
 	
 	private void updateElevatorState() {
-		synchronized(destinations) {
+
 			//If there are no destinations then the elevator should not move
-			if(destinations.isEmpty()) {
-				currentState = ElevatorState.NOT_MOVING;
-			}
-			int higestDestination = currentLevel;
-			int lowestDestination = currentLevel;
-			switch(currentState) {
-			case MOVING_UP:	
-				for(Integer integer : destinations) {
-					if(integer > higestDestination) {
-						higestDestination = integer;
-					}
+		if(destinations.isEmpty()) {
+			currentState = ElevatorState.NOT_MOVING;
+		}
+		int higestDestination = currentLevel;
+		int lowestDestination = currentLevel;
+		switch(currentState) {
+		case MOVING_UP:	
+			for(Integer integer : destinations) {
+				if(integer > higestDestination) {
+					higestDestination = integer;
 				}
-				if(higestDestination == currentLevel) {
+			}
+			if(higestDestination == currentLevel) {
+				currentState = ElevatorState.MOVING_DOWN;
+			}
+			break;
+		case MOVING_DOWN:
+			for(Integer integer : destinations) {
+				if(integer < lowestDestination) {
+					lowestDestination = integer;
+				}
+			}
+			if(lowestDestination == currentLevel) {
+				currentState = ElevatorState.MOVING_UP;
+			}
+			break;
+		case NOT_MOVING:
+			if(!destinations.isEmpty()) {
+				int closest = findClosestLevel(destinations);
+				if(currentLevel < closest) {
+					currentState = ElevatorState.MOVING_UP;
+				} else if(currentLevel > closest) {
 					currentState = ElevatorState.MOVING_DOWN;
 				}
-				break;
-			case MOVING_DOWN:
-				for(Integer integer : destinations) {
-					if(integer < lowestDestination) {
-						lowestDestination = integer;
-					}
-				}
-				if(lowestDestination == currentLevel) {
-					currentState = ElevatorState.MOVING_UP;
-				}
-				break;
-			case NOT_MOVING:
-				if(!destinations.isEmpty()) {
-					int closest = findClosestLevel(destinations);
-					if(currentLevel < closest) {
-						currentState = ElevatorState.MOVING_UP;
-					} else if(currentLevel > closest) {
-						currentState = ElevatorState.MOVING_DOWN;
-					}
-				}
-				break;
 			}
+			break;
 		}
+		
 	}
 	
 	private int findClosestLevel(Set<Integer> destinations) {
@@ -251,16 +252,14 @@ public class Elevator implements Runnable{
 	private boolean shouldOpenDoors() {
 		boolean openDoors = false;
 		
-		synchronized(destinations) {
-			for(Integer destination : destinations) {
-				if(destination == currentLevel) {
-					openDoors = true;
-					destinations.remove(destination);
-					break;
-				}
-			}		
-		}
-		
+		for(Integer destination : destinations) {
+			if(destination == currentLevel) {
+				openDoors = true;
+				destinations.remove(destination);
+				break;
+			}
+		}		
+			
 		return openDoors;
 	}
 	
