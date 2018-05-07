@@ -2,7 +2,7 @@
 public class Program {
 
 	public static void main(String[] args) {
-		System.out.println("Hello database!");
+		System.out.println("Hello database!"); 
 	}
 
 }
