@@ -1,4 +1,4 @@
-package java1;
+package java1.main;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -61,7 +61,7 @@ public class BookingManager {
 					menu.printStartTimeMustBeBeforeStopTime();
 					break;
 				}
-				timeSlot.setTimeSlotTop(stopTime);
+				timeSlot.setTimeSlotStop(stopTime);
 				// If validation worked goto next step
 				stage = BookingStages.MAKEBOOKING;
 				break;

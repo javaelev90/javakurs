@@ -1,4 +1,4 @@
-package java1;
+package java1.main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public class Schedule {
 	private ScheduleLimits limits;
 
 	public Schedule(ScheduleLimits limits) {
-		schedule = new HashMap<String, List<Booking>>();
+		schedule = new HashMap<>();
 		this.limits = limits;
 	}
 
@@ -77,7 +77,7 @@ public class Schedule {
 		String date = booking.getBookingTime().getTimeSlotStart().toLocalDate().toString();
 		List<Booking> bookings;
 		if (!schedule.containsKey(date)) {
-			bookings = new ArrayList<Booking>();
+			bookings = new ArrayList<>();
 		} else {
 			bookings = schedule.get(date);
 		}

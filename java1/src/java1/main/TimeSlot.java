@@ -1,4 +1,4 @@
-package java1;
+package java1.main;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +19,7 @@ public class TimeSlot {
 		return timeSlotStop;
 	}
 
-	public void setTimeSlotTop(LocalDateTime timeSlotStop) {
+	public void setTimeSlotStop(LocalDateTime timeSlotStop) {
 		this.timeSlotStop = timeSlotStop;
 	}
 

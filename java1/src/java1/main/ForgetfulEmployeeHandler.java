@@ -1,4 +1,4 @@
-package java1;
+package java1.main;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,10 +21,7 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler {
 
 	@Override
 	public boolean bookEmployee(Employee employee, Booking booking) {
-		if (dataStore.storeBooking(employee.getId(), booking)) {
-			return true;
-		}
-		return false;
+		return dataStore.storeBooking(employee.getId(), booking);
 	}
 
 	@Override
@@ -42,6 +39,7 @@ public class ForgetfulEmployeeHandler implements EmployeeHandler {
 		if (!employees.isEmpty()) {
 			Employee employeeWithFewestBookings = employees.get(0);
 			for (int i = 0; i < employees.size(); i++) {
+
 				int numberOfBookings = employees.get(i).getSchedule().getNumberOfAppointmentsOnDate(date);
 				if (numberOfBookings < leastNumberOfBookings) {
 					leastNumberOfBookings = numberOfBookings;

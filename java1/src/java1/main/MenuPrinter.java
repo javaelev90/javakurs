@@ -1,4 +1,4 @@
-package java1;
+package java1.main;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
